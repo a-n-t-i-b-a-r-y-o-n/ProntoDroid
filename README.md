@@ -13,7 +13,7 @@
 2. Import the project into Android Studio
 3. Build, deploy, and enjoy!
 
-I only have a handful of functional Android devices lying around the place. So far I've only tested this on my Google Pixel.
+I only have a handful of functional Android devices lying around the place. So far I've only tested this on my Google Pixel running Android Nougat.
 
 
 ## To Do:
