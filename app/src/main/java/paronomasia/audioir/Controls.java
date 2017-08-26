@@ -1,5 +1,6 @@
 package paronomasia.audioir;
 
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -8,6 +9,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.ImageButton;
 
 public class Controls extends AppCompatActivity {
 
@@ -15,17 +18,40 @@ public class Controls extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_controls);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
+        FloatingActionButton fab = findViewById(R.id.fab);
+        fab.setOnClickListener(l -> Snackbar.make(l, "Not implemented yet...", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show());
+
+
+        ImageButton pwrButton = findViewById(R.id.pwrButton);
+        pwrButton.setOnClickListener(l -> {
+            MediaPlayer pwrMP = MediaPlayer.create(this, R.raw.sanyopower);
+            pwrMP.start();
+            //mp.setVolume(100,100);
         });
+
+
+        Button inputButton = findViewById(R.id.inputButton);
+        inputButton.setOnClickListener(l -> {
+            MediaPlayer inputMP = MediaPlayer.create(this, R.raw.sanyoinput);
+            inputMP.start();
+        });
+
+        Button volUPButton = findViewById(R.id.volUPButton);
+        volUPButton.setOnClickListener(l -> {
+            MediaPlayer volupMP = MediaPlayer.create(this, R.raw.sanyovolup);
+            volupMP.start();
+        });
+
+        Button volDNButton = findViewById(R.id.volDNButton);
+        volDNButton.setOnClickListener(l -> {
+            MediaPlayer voldnMP = MediaPlayer.create(this, R.raw.sanyovoldown);
+            voldnMP.start();
+        });
+
     }
 
     @Override
