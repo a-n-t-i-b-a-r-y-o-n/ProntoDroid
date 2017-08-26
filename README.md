@@ -13,6 +13,8 @@
 2. Import the project into Android Studio
 3. Build, deploy, and enjoy!
 
+I only have a handful of functional Android devices lying around the place. So far I've only tested this on my Google Pixel.
+
 
 ## To Do:
 I've just begun work on this project in my free time to fill the gap I found with other lackluster app solutions. There's still much to be done. As of right now, it only functions with my living room Sanyo tv thanks to .wav files I made on my laptop.
