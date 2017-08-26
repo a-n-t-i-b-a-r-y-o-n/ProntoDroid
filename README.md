@@ -2,10 +2,10 @@
 
 ## Requirements
 * Android Studio 3.0+ (Beta or Canary - required for Java 1.8)
-  * Can be installed alongside a stable version. You can get it [here](https://developer.android.com/studio/preview/index.html)
+  * Can be installed alongside a stable version. You can get it [here](https://developer.android.com/studio/preview/index.html).
 * Gradle 4.0+ (Comes with Android Studio 3)
 * 3.5mm IR adapter
-  * These are super cheap - I lazily picked mine from [here](https://www.ebay.com/itm/351790827736), but you could also [build](https://electronics.stackexchange.com/questions/56540/ir-audio-receiver-and-transmitter) one.
+  * These are super cheap - I lazily picked mine from [eBay](https://www.ebay.com/itm/351790827736), but you could also [build](https://electronics.stackexchange.com/questions/56540/ir-audio-receiver-and-transmitter) one.
 * A device running Android Lollipop 5.0+
 
 ## Building / Installation
