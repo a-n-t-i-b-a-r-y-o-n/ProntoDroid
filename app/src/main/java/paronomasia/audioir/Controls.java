@@ -1,7 +1,9 @@
 package paronomasia.audioir;
 
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +15,11 @@ import android.widget.Button;
 import android.widget.ImageButton;
 
 public class Controls extends AppCompatActivity {
+
+
+    public enum Pressed {
+        POWER, INPUT, VOLUP, VOLDN, CHANUP, CHANDN, UP, DOWN, LEFT, RIGHT, SELECT, MENU
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,30 +34,17 @@ public class Controls extends AppCompatActivity {
 
 
         ImageButton pwrButton = findViewById(R.id.pwrButton);
-        pwrButton.setOnClickListener(l -> {
-            MediaPlayer pwrMP = MediaPlayer.create(this, R.raw.sanyopower);
-            pwrMP.start();
-            //mp.setVolume(100,100);
-        });
+        pwrButton.setOnClickListener(l -> transmitCode(R.raw.sanyopower, Pressed.POWER));
 
 
         Button inputButton = findViewById(R.id.inputButton);
-        inputButton.setOnClickListener(l -> {
-            MediaPlayer inputMP = MediaPlayer.create(this, R.raw.sanyoinput);
-            inputMP.start();
-        });
+        inputButton.setOnClickListener(l -> transmitCode(R.raw.sanyoinput, Pressed.INPUT));
 
         Button volUPButton = findViewById(R.id.volUPButton);
-        volUPButton.setOnClickListener(l -> {
-            MediaPlayer volupMP = MediaPlayer.create(this, R.raw.sanyovolup);
-            volupMP.start();
-        });
+        volUPButton.setOnClickListener(l -> transmitCode(R.raw.sanyovolup, Pressed.VOLUP));
 
         Button volDNButton = findViewById(R.id.volDNButton);
-        volDNButton.setOnClickListener(l -> {
-            MediaPlayer voldnMP = MediaPlayer.create(this, R.raw.sanyovoldown);
-            voldnMP.start();
-        });
+        volDNButton.setOnClickListener(l -> transmitCode(R.raw.sanyovoldown, Pressed.VOLDN));
 
     }
 
@@ -74,5 +68,23 @@ public class Controls extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+
+    public void transmitCode(int wavFile, Pressed pressed){
+
+        // Determine and set max volume
+        AudioManager am = (AudioManager) getSystemService(AUDIO_SERVICE);
+        int origVol = am.getStreamVolume(AudioManager.STREAM_MUSIC);
+        am.setStreamVolume(AudioManager.STREAM_MUSIC, am.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
+
+        // Initiate playback
+        MediaPlayer mp = MediaPlayer.create(this, wavFile);
+        mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        mp.setVolume(1, 1);
+        mp.start();
+
+        // Reset volume to original setting for the user
+        mp.setOnCompletionListener(l -> am.setStreamVolume(AudioManager.STREAM_MUSIC, origVol, 0));
     }
 }
