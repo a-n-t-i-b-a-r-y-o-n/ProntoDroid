@@ -12,12 +12,40 @@
         <activity
             android:name=".Controls"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:screenOrientation="sensorPortrait"
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".Settings"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName=".Controls"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="paronomasia.audioir.Controls" />
+        </activity>
+        <activity
+            android:name=".RemoteList"
+            android:label="@string/title_activity_remote_list"
+            android:parentActivityName=".Controls"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="paronomasia.audioir.Controls" />
+        </activity>
+        <activity
+            android:name=".AddRemote"
+            android:label="@string/title_activity_add_remote"
+            android:parentActivityName=".Controls"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="paronomasia.audioir.Controls" />
         </activity>
     </application>
 

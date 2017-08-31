@@ -17,7 +17,9 @@ I only have a handful of functional Android devices lying around the place. So f
 
 
 ## Screenshots
-![Screenshot 1](/doc/Screenshot01_med.png)
+![Screenshot 1](/doc/Screenshot_1.png)
+![Screenshot 2](/doc/Screenshot_2.png)
+![Screenshot 3](/doc/Screenshot_3.png)
 
 
 ## To Do:

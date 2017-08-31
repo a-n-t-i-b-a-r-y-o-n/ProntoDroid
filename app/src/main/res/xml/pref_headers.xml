@@ -1,0 +1,21 @@
+<preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- These settings headers are only used on tablets. -->
+
+    <header
+        android:fragment="paronomasia.audioir.Settings$GeneralPreferenceFragment"
+        android:icon="@drawable/ic_info_black_24dp"
+        android:title="These are just placeholders." />
+
+    <header
+        android:fragment="paronomasia.audioir.Settings$NotificationPreferenceFragment"
+        android:icon="@drawable/ic_notifications_black_24dp"
+        android:title="They do absolutely nothing..." />
+
+    <header
+        android:fragment="paronomasia.audioir.Settings$DataSyncPreferenceFragment"
+        android:icon="@drawable/ic_sync_black_24dp"
+        android:title=" " />
+
+
+</preference-headers>

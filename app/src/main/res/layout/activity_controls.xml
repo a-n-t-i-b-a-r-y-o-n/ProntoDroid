@@ -4,18 +4,31 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/black"
+    android:theme="@android:style/ThemeOverlay.Material.Dark"
     tools:context="paronomasia.audioir.Controls">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
+
+
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:background="@android:color/black"
+        android:theme="@style/AppTheme.AppBarOverlay"
+        android:visibility="gone">
+
+        <!-- Changed this to forcibly hide the action bar
+        I just don't fucking get Android Studio sometimes.
+        All this appcompat bullshit seems really contrived.
+        android:layout_height="wrap_content"
+        -->
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
+            android:background="@android:color/black"
+            android:visibility="gone"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
     </android.support.design.widget.AppBarLayout>
@@ -28,6 +41,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@drawable/remotebutton" />
+        android:src="@drawable/remote_icon_48dp"
+        app:srcCompat="@drawable/remote_icon_48dp" />
+
+    <include layout="@layout/fab_layout" />
 
 </android.support.design.widget.CoordinatorLayout>
