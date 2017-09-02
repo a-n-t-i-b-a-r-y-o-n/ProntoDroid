@@ -34,6 +34,7 @@
     </android.support.design.widget.AppBarLayout>
 
     <include layout="@layout/content_controls" />
+    <include layout="@layout/fab_layout" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
@@ -45,6 +46,5 @@
         app:backgroundTint="@color/fabColor"
         app:srcCompat="@drawable/remote_icon_48dp" />
 
-    <include layout="@layout/fab_layout" />
 
 </android.support.design.widget.CoordinatorLayout>

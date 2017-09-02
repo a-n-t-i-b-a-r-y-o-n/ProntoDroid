@@ -9,7 +9,10 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.animation.Animation;
@@ -44,6 +47,7 @@ public class Controls extends AppCompatActivity {
         FloatingActionButton minifab_settings = findViewById(R.id.minifab_settings);
         FloatingActionButton minifab_list = findViewById(R.id.minifab_list);
 
+
         ImageButton pwrButton = findViewById(R.id.pwrButton);
         ImageButton inputButton = findViewById(R.id.inputButton);
         ImageButton volUPButton = findViewById(R.id.volUPButton);
@@ -58,13 +62,6 @@ public class Controls extends AppCompatActivity {
             }
             else {
                 openFabMenu();
-            }
-        });
-
-        fab.setOnFocusChangeListener((l, b) -> {
-            //l = listener, b = boolean hasFocus ?
-            if(!b){
-                closeFabMenu();
             }
         });
 
@@ -98,6 +95,7 @@ public class Controls extends AppCompatActivity {
 
     }
 
+
     @Override
     protected void onResume(){
         // Hide the status bar (do this first!)
@@ -129,79 +127,115 @@ public class Controls extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    // #### FAB Menu methods
+
     private void openFabMenu(){
-        fabMenu = true;
-        FloatingActionButton fab = findViewById(R.id.fab);
-        FloatingActionButton minifab_add = findViewById(R.id.minifab_add);
-        FloatingActionButton minifab_settings = findViewById(R.id.minifab_settings);
-        FloatingActionButton minifab_list = findViewById(R.id.minifab_list);
+        if (!fabMenu) {
+            fabMenu = true;
+            FloatingActionButton fab = findViewById(R.id.fab);
+            FloatingActionButton minifab_add = findViewById(R.id.minifab_add);
+            FloatingActionButton minifab_settings = findViewById(R.id.minifab_settings);
+            FloatingActionButton minifab_list = findViewById(R.id.minifab_list);
 
-        // Add new margins to the layout params
-        FrameLayout.LayoutParams layoutParams1 = (FrameLayout.LayoutParams) minifab_add.getLayoutParams();
-        layoutParams1.rightMargin += (int) (minifab_add.getWidth() * 1.7);
-        layoutParams1.bottomMargin += (int) (minifab_add.getHeight() * 0.25);
-        minifab_add.setLayoutParams(layoutParams1);
+            // Add new margins to the layout params
+            FrameLayout.LayoutParams layoutParams1 = (FrameLayout.LayoutParams) minifab_add.getLayoutParams();
+            layoutParams1.rightMargin += (int) (minifab_add.getWidth() * 1.7);
+            layoutParams1.bottomMargin += (int) (minifab_add.getHeight() * 0.25);
+            minifab_add.setLayoutParams(layoutParams1);
 
-        FrameLayout.LayoutParams layoutParams2 = (FrameLayout.LayoutParams) minifab_settings.getLayoutParams();
-        layoutParams2.rightMargin += (int) (minifab_settings.getWidth() * 1.5);
-        layoutParams2.bottomMargin += (int) (minifab_settings.getHeight() * 1.5);
-        minifab_settings.setLayoutParams(layoutParams2);
+            FrameLayout.LayoutParams layoutParams2 = (FrameLayout.LayoutParams) minifab_settings.getLayoutParams();
+            layoutParams2.rightMargin += (int) (minifab_settings.getWidth() * 1.5);
+            layoutParams2.bottomMargin += (int) (minifab_settings.getHeight() * 1.5);
+            minifab_settings.setLayoutParams(layoutParams2);
 
-        FrameLayout.LayoutParams layoutParams3 = (FrameLayout.LayoutParams) minifab_list.getLayoutParams();
-        layoutParams3.rightMargin += (int) (minifab_list.getWidth() * 0.25);
-        layoutParams3.bottomMargin += (int) (minifab_list.getHeight() * 1.7);
-        minifab_list.setLayoutParams(layoutParams3);
+            FrameLayout.LayoutParams layoutParams3 = (FrameLayout.LayoutParams) minifab_list.getLayoutParams();
+            layoutParams3.rightMargin += (int) (minifab_list.getWidth() * 0.25);
+            layoutParams3.bottomMargin += (int) (minifab_list.getHeight() * 1.7);
+            minifab_list.setLayoutParams(layoutParams3);
 
-        // Adjust their visibility
-        minifab_add.setVisibility(View.VISIBLE);
-        minifab_settings.setVisibility(View.VISIBLE);
-        minifab_list.setVisibility(View.VISIBLE);
+            // Adjust their visibility
+            minifab_add.setVisibility(View.VISIBLE);
+            minifab_settings.setVisibility(View.VISIBLE);
+            minifab_list.setVisibility(View.VISIBLE);
 
 
-        // Start the animations
-        minifab_add.startAnimation(AnimationUtils.loadAnimation(getApplication(), R.anim.show_minifab1));
-        minifab_settings.startAnimation(AnimationUtils.loadAnimation(getApplication(), R.anim.show_minifab2));
-        minifab_list.startAnimation(AnimationUtils.loadAnimation(getApplication(), R.anim.show_minifab3));
+            // Start the animations
+            minifab_add.startAnimation(AnimationUtils.loadAnimation(getApplication(), R.anim.show_minifab1));
+            minifab_settings.startAnimation(AnimationUtils.loadAnimation(getApplication(), R.anim.show_minifab2));
+            minifab_list.startAnimation(AnimationUtils.loadAnimation(getApplication(), R.anim.show_minifab3));
 
-        // Change main FAB icon to edit button
-        fab.setImageResource(R.drawable.ic_create_white_48dp);
+            // Change main FAB icon to edit button
+            fab.setImageResource(R.drawable.ic_create_white_48dp);
+        }
 
     }
 
     private void closeFabMenu(){
-        fabMenu = false;
+
+        if (fabMenu) {
+            fabMenu = false;
+            FloatingActionButton fab = findViewById(R.id.fab);
+            FloatingActionButton minifab_add = findViewById(R.id.minifab_add);
+            FloatingActionButton minifab_settings = findViewById(R.id.minifab_settings);
+            FloatingActionButton minifab_list = findViewById(R.id.minifab_list);
+
+            // Do the opposite
+            FrameLayout.LayoutParams layoutParams1 = (FrameLayout.LayoutParams) minifab_add.getLayoutParams();
+            layoutParams1.rightMargin -= (int) (minifab_add.getWidth() * 1.7);
+            layoutParams1.bottomMargin -= (int) (minifab_add.getHeight() * 0.25);
+            minifab_add.setLayoutParams(layoutParams1);
+
+            FrameLayout.LayoutParams layoutParams2 = (FrameLayout.LayoutParams) minifab_settings.getLayoutParams();
+            layoutParams2.rightMargin -= (int) (minifab_settings.getWidth() * 1.5);
+            layoutParams2.bottomMargin -= (int) (minifab_settings.getHeight() * 1.5);
+            minifab_settings.setLayoutParams(layoutParams2);
+
+            FrameLayout.LayoutParams layoutParams3 = (FrameLayout.LayoutParams) minifab_list.getLayoutParams();
+            layoutParams3.rightMargin -= (int) (minifab_list.getWidth() * 0.25);
+            layoutParams3.bottomMargin -= (int) (minifab_list.getHeight() * 1.7);
+            minifab_list.setLayoutParams(layoutParams3);
+
+            // Animations
+            minifab_add.startAnimation(AnimationUtils.loadAnimation(getApplication(), R.anim.hide_minifab1));
+            minifab_settings.startAnimation(AnimationUtils.loadAnimation(getApplication(), R.anim.hide_minifab2));
+            minifab_list.startAnimation(AnimationUtils.loadAnimation(getApplication(), R.anim.hide_minifab3));
+
+            minifab_add.setVisibility(View.INVISIBLE);
+            minifab_settings.setVisibility(View.INVISIBLE);
+            minifab_list.setVisibility(View.INVISIBLE);
+
+            // Set main FAB icon back to normal
+            fab.setImageResource(R.drawable.remote_icon_48dp);
+        }
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent e) {
+
+        // This method catches touch events, though here its primary usage is detecting touches
+        // *outside* the little FAB menu in order to close it.
+        // NOTE that it does so by using the locations of the one on top and the one furthest to the left.
+        // ...this is open source, so if you have a better idea then by all means implement it...
+
         FloatingActionButton fab = findViewById(R.id.fab);
-        FloatingActionButton minifab_add = findViewById(R.id.minifab_add);
-        FloatingActionButton minifab_settings = findViewById(R.id.minifab_settings);
-        FloatingActionButton minifab_list = findViewById(R.id.minifab_list);
-
-        // Do the opposite
-        FrameLayout.LayoutParams layoutParams1 = (FrameLayout.LayoutParams) minifab_add.getLayoutParams();
-        layoutParams1.rightMargin -= (int) (minifab_add.getWidth() * 1.7);
-        layoutParams1.bottomMargin -= (int) (minifab_add.getHeight() * 0.25);
-        minifab_add.setLayoutParams(layoutParams1);
-
-        FrameLayout.LayoutParams layoutParams2 = (FrameLayout.LayoutParams) minifab_settings.getLayoutParams();
-        layoutParams2.rightMargin -= (int) (minifab_settings.getWidth() * 1.5);
-        layoutParams2.bottomMargin -= (int) (minifab_settings.getHeight() * 1.5);
-        minifab_settings.setLayoutParams(layoutParams2);
-
-        FrameLayout.LayoutParams layoutParams3 = (FrameLayout.LayoutParams) minifab_list.getLayoutParams();
-        layoutParams3.rightMargin -= (int) (minifab_list.getWidth() * 0.25);
-        layoutParams3.bottomMargin -= (int) (minifab_list.getHeight() * 1.7);
-        minifab_list.setLayoutParams(layoutParams3);
-
-        // Animations
-        minifab_add.startAnimation(AnimationUtils.loadAnimation(getApplication(), R.anim.hide_minifab1));
-        minifab_settings.startAnimation(AnimationUtils.loadAnimation(getApplication(), R.anim.hide_minifab2));
-        minifab_list.startAnimation(AnimationUtils.loadAnimation(getApplication(), R.anim.hide_minifab3));
-
-        minifab_add.setVisibility(View.INVISIBLE);
-        minifab_settings.setVisibility(View.INVISIBLE);
-        minifab_list.setVisibility(View.INVISIBLE);
-
-        // Set main FAB icon back to normal
-        fab.setImageResource(R.drawable.remote_icon_48dp);
+        FloatingActionButton fabL = findViewById(R.id.minifab_add); // minifab furthest to left
+        FloatingActionButton fabT = findViewById(R.id.minifab_list);   // minifab furthest up
+        int[] fabLoc = new int[2];
+        fab.getLocationOnScreen(fabLoc);
+        int[] fabLLoc = new int[2];
+        fabL.getLocationOnScreen(fabLLoc);
+        int[] fabTLoc = new int[2];
+        fabT.getLocationOnScreen(fabTLoc);
+        float x = e.getRawX();
+        float y = e.getRawY();
+        if ((x < fabLLoc[0] || x > fabLoc[0] + fab.getWidth()) || (y < fabTLoc[1] || y > fabLoc[1] + fab.getHeight())) {
+            // Somewhere outside the FAB menu got clicked
+            if(fabMenu){
+                closeFabMenu();
+                return super.dispatchTouchEvent(e);
+            }
+        }
+        return super.dispatchTouchEvent(e);
     }
 
 
