@@ -1,6 +1,7 @@
 package paronomasia.audioir;
 
 import android.app.ActionBar;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,11 +14,13 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TableRow;
 
-import java.util.List;
-
-import static android.view.View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-
 public class RemoteList extends AppCompatActivity {
+
+    /*
+    TODO
+        - Implement some type of scrolling list view (RecyclerView? ListView? Nested Scrolling View?)
+        - Make this actually pull from the DB
+     */
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,20 +31,18 @@ public class RemoteList extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_remote_list);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+
 
         TableRow addButton = findViewById(R.id.addRemoteTR);
-        addButton.setOnClickListener(l ->{
+        addButton.setOnClickListener(v ->{
 
             Intent i = new Intent(RemoteList.this, AddRemote.class);
             startActivity(i);
 
         });
         ImageButton plusButton = findViewById(R.id.addRemoteButton);
-        plusButton.setOnClickListener(l -> addButton.callOnClick());
+        plusButton.setOnClickListener(v -> addButton.callOnClick());
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
     }
 
@@ -53,6 +54,21 @@ public class RemoteList extends AppCompatActivity {
         decorView.setSystemUiVisibility(uiOptions);
 
         super.onResume();
+    }
+
+    @Override
+    protected void onStop(){
+        Bundle res = new Bundle();
+        res.putInt("remote", 1);
+        Intent i = new Intent();
+        i.putExtras(res);
+        if (getParent() == null) {
+            setResult(RemoteList.RESULT_OK, i);
+        } else {
+            getParent().setResult(RemoteList.RESULT_OK, i);
+        }
+        finish();
+        super.onStop();
     }
 
 }

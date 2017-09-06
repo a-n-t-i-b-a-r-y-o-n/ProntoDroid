@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -12,22 +11,31 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnTouchListener;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 public class Controls extends AppCompatActivity {
 
+    /*
+    TODO
+    Soooo much... Including:
+
+        - Load a remote class file (and corresponding resources)
+        - Make the buttons arrangeable
+        - Link between the enum Pressed and resource files
+        - Make the Current Remote text accurate to the loaded remote instance
+        - Implement the other miniFAB buttons (adding buttons, editing buttons, etc.)
+     */
 
     public enum Pressed {
         POWER, INPUT, VOLUP, VOLDN, CHANUP, CHANDN, UP, DOWN, LEFT, RIGHT, SELECT, MENU
     }
 
+    static final int OPEN_LIST_REQUEST = 1;
     public boolean fabMenu = false;
 
     @Override
@@ -38,8 +46,12 @@ public class Controls extends AppCompatActivity {
         decorView.setSystemUiVisibility(uiOptions);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_controls);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+
+        // Purge DB on startup for now
+        RemotesDBHelper rdb = new RemotesDBHelper(Controls.this);
+        rdb.purgeDB();
+
+
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setImageResource(R.drawable.remote_icon_48dp);
@@ -52,12 +64,16 @@ public class Controls extends AppCompatActivity {
         ImageButton inputButton = findViewById(R.id.inputButton);
         ImageButton volUPButton = findViewById(R.id.volUPButton);
         ImageButton volDNButton = findViewById(R.id.volDNButton);
+        ImageButton muteButton = findViewById(R.id.muteButton);
+
+
+
 
         // This opens the little FAB menu when you click on the regular FAB
-        fab.setOnClickListener(l -> {
+        fab.setOnClickListener(v -> {
             if(fabMenu){
                 closeFabMenu();
-                Snackbar.make(l, "Editing isn't implemented yet...", Snackbar.LENGTH_LONG)
+                Snackbar.make(v, "Editing isn't implemented yet...", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
             else {
@@ -65,33 +81,35 @@ public class Controls extends AppCompatActivity {
             }
         });
 
-        minifab_settings.setOnClickListener(l -> {
+        minifab_settings.setOnClickListener(v -> {
             closeFabMenu();
             Intent i = new Intent(Controls.this, Settings.class);
             startActivity(i);
         });
 
-        minifab_list.setOnClickListener(l -> {
+        minifab_list.setOnClickListener(v -> {
             closeFabMenu();
-            Intent i = new Intent(Controls.this, RemoteList.class);
-            startActivity(i);
+            Intent i = new Intent(Intent.ACTION_VIEW);
+            i.setClassName("paronomasia.audioir", "paronomasia.audioir.RemoteList");
+            startActivityForResult(i, OPEN_LIST_REQUEST);
         });
 
-        minifab_add.setOnClickListener(l -> {
+        minifab_add.setOnClickListener(v -> {
             closeFabMenu();
-            Snackbar.make(l, "Adding buttons isn't implemented yet...", Snackbar.LENGTH_LONG)
+            Snackbar.make(v, "Adding buttons isn't implemented yet...", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();
         });
 
 
+        pwrButton.setOnClickListener(v -> transmitCode(R.raw.sanyopower, Pressed.POWER));
 
-        pwrButton.setOnClickListener(l -> transmitCode(R.raw.sanyopower, Pressed.POWER));
+        inputButton.setOnClickListener(v -> transmitCode(R.raw.sanyoinput, Pressed.INPUT));
 
-        inputButton.setOnClickListener(l -> transmitCode(R.raw.sanyoinput, Pressed.INPUT));
+        volUPButton.setOnClickListener(v -> transmitCode(R.raw.sanyovolup, Pressed.VOLUP));
 
-        volUPButton.setOnClickListener(l -> transmitCode(R.raw.sanyovolup, Pressed.VOLUP));
+        volDNButton.setOnClickListener(v -> transmitCode(R.raw.sanyovoldown, Pressed.VOLDN));
 
-        volDNButton.setOnClickListener(l -> transmitCode(R.raw.sanyovoldown, Pressed.VOLDN));
+        muteButton.setOnClickListener(v -> Toast.makeText(v.getContext(), "Mute", Toast.LENGTH_SHORT).show());
 
     }
 
@@ -106,25 +124,23 @@ public class Controls extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_controls, menu);
-        return true;
-    }
+    protected void onActivityResult(int request, int result, Intent data){
+        switch(request){
+            case 1:
+                if(result == RESULT_OK){
+                    // Determine the remote selected and change the UI accordingly.
+                    int res = data.getIntExtra("remote", 0);
+                    Log.d(" ~ Lifecycle ~ ", "Returned to Controls");
+                    Log.d("Result", data.getExtras().toString());
+                }
+                else {
+                    Log.d(" ~ Lifecycle ~ ", "Returned with result " + result);
+                }
+                break;
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
         }
 
-        return super.onOptionsItemSelected(item);
+
     }
 
     // #### FAB Menu methods
