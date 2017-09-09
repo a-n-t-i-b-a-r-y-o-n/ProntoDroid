@@ -65,8 +65,20 @@ public class Controls extends AppCompatActivity {
         ImageButton volUPButton = findViewById(R.id.volUPButton);
         ImageButton volDNButton = findViewById(R.id.volDNButton);
         ImageButton muteButton = findViewById(R.id.muteButton);
+        ImageButton testProntoButton = findViewById(R.id.testProntoButton);
 
 
+        testProntoButton.setOnClickListener(v -> {
+            Pronto p1 = new Pronto("0000 006C 0022 0002 015B 00AD 0016 0016 0016 0016 " +
+                    "0016 0016 0016 0041 0016 0041 0016 0041 0016 0016 0016 0016 0016 0041 0016 " +
+                    "0041 0016 0041 0016 0016 0016 0016 0016 0016 0016 0041 0016 0041 0016 0016 " +
+                    "0016 0041 0016 0016 0016 0016 0016 0041 0016 0016 0016 0016 0016 0016 0016 " +
+                    "0041 0016 0016 0016 0041 0016 0041 0016 0016 0016 0041 0016 0041 0016 0041 " +
+                    "0016 05F7 015B 0057 0016 0E6C");
+            p1.analyze();
+            p1.play();
+            p1.debugPrintHex();
+        });
 
 
         // This opens the little FAB menu when you click on the regular FAB
