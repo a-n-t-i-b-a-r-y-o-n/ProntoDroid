@@ -24,10 +24,10 @@ public class Controls extends AppCompatActivity {
     TODO
     Soooo much... Including:
 
-        - Load a remote class file (and corresponding resources)
-        - Make the buttons arrangeable
-        - Link between the enum Pressed and resource files
+        - Load a remote class file using remote->current boolean
         - Make the Current Remote text accurate to the loaded remote instance
+        - Make the buttons (re)arrangeable
+        - Link between the enum Pressed and resource files
         - Implement the other miniFAB buttons (adding buttons, editing buttons, etc.)
      */
 

@@ -55,7 +55,10 @@ public class AddRemote extends AppCompatActivity implements OnItemSelectedListen
                 // !!! DB TEST!!!
                 ArrayList<String> s1 = new ArrayList<>();
                 s1.add(codeField.getText().toString());
-                Remote r1 = new Remote(s1, rdb.getVendor(vendorMenu.getSelectedItem().toString()), (Remote.deviceType) typeMenu.getSelectedItem(), remoteNameField.getText().toString());
+
+                // Remote(ArrayList<String> codes, int vendor, deviceType type, String name, boolean current, String hash)
+                Remote r1 = new Remote(s1, rdb.getVendor(vendorMenu.getSelectedItem().toString()),
+                        (Remote.deviceType) typeMenu.getSelectedItem(), remoteNameField.getText().toString(), true, "");
                 if(rdb.addRemote(r1)) {
                     Snackbar.make(v, "Wrote successfully.", Snackbar.LENGTH_SHORT)
                             .setAction("Action", null).show();

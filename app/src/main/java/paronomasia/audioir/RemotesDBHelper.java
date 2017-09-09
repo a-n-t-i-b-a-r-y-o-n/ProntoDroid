@@ -20,8 +20,8 @@ public class RemotesDBHelper extends SQLiteOpenHelper {
     /*
     TODO
         - Finish implementing the DB handler
-        - Sort out implementations using ArrayList<E> vs List<E>
         - Implement tagging buttons by ID (all are stored as value 0 right now)
+        - Implement using hashes to determine if a remote has changed (i.e. should be set to current)
      */
 
     // Extensive help from here: github.com/codepath/android_guides/wiki/Local-Databases-with-SQLiteOpenHelper
@@ -35,20 +35,22 @@ public class RemotesDBHelper extends SQLiteOpenHelper {
     private static final String TABLE_VENDORS = "vendor";
     private static final String TABLE_CODES = "codes";
 
-    // Remote Columns ?
-    private static final String KEY_REMOTE_ID = "_id"; //this needs to auto-increment
-    private static final String KEY_REMOTE_NAME = "name";
-    private static final String KEY_REMOTE_TYPE = "type";
-    private static final String KEY_REMOTE_VENDOR = "vendorID";
+    // Remote Table Columns
+    private static final String KEY_REMOTE_ID = "_id";              // The auto-incrementing ID
+    private static final String KEY_REMOTE_NAME = "name";           // Name of the remote
+    private static final String KEY_REMOTE_TYPE = "type";           // Type of device the remote is for
+    private static final String KEY_REMOTE_VENDOR = "vendorID";     // Vendor ID references _id from Vendor table
+    private static final String KEY_CURRENT = "current";            // 1 or 0 INT (boolean) for whether this is the current remote.
+    private static final String KEY_REMOTE_HASH = "hash";                  // ~ UNUSED YET ~ Hash of the remote values + codes to determine if it has changed.
 
-    // Code Columns ?
-    private static final String KEY_CODE = "code";
-    private static final String KEY_CODE_BUTTON = "button";
-    private static final String KEY_CODE_REMOTE_ID_FK = "remoteID"; //join this on remotes.id
+    // Code Table Columns
+    private static final String KEY_CODE = "code";                  // Actual code value, stored as string to preserve spaces and x's for Pronto notation
+    private static final String KEY_CODE_BUTTON = "button";         // ~ UNUSED YET ~ this will determine which button on the controls this code goes with
+    private static final String KEY_CODE_REMOTE_ID_FK = "remoteID"; // references the _id of a remote from the Remote table
 
-    // Vendor Columns ?
-    private static final String KEY_VENDOR_ID = "_id";
-    private static final String KEY_VENDOR_NAME = "name";
+    // Vendor Table Columns
+    private static final String KEY_VENDOR_ID = "_id";              // Vendor ID number
+    private static final String KEY_VENDOR_NAME = "name";           // Vendor name as a string
 
 
     public RemotesDBHelper(Context context) {
@@ -73,8 +75,9 @@ public class RemotesDBHelper extends SQLiteOpenHelper {
                     KEY_REMOTE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
                     KEY_REMOTE_NAME + " TEXT, " +
                     KEY_REMOTE_TYPE + " TEXT, " +
-                    KEY_REMOTE_VENDOR + " INTEGER " +
-                //REFERENCES " + TABLE_VENDORS +
+                    KEY_REMOTE_VENDOR + " INTEGER, " +
+                    KEY_CURRENT + " INTEGER, " +
+                    KEY_REMOTE_HASH + " TEXT " +
                 ")";
 
         String CREATE_CODES_TABLE = "CREATE TABLE " + TABLE_CODES +
@@ -118,22 +121,25 @@ public class RemotesDBHelper extends SQLiteOpenHelper {
         final String BASIC_SELECT_QUERY = String.format("SELECT * FROM %s", TABLE_REMOTES);
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery(BASIC_SELECT_QUERY, null);
+        Remote.deviceType type = Remote.deviceType.OTHER;
         try {
             if (cursor.moveToFirst()) {
                 do {
-                    Remote remote = new Remote();
-                    remote.setName(cursor.getString(cursor.getColumnIndex(KEY_REMOTE_NAME)));
-                    remote.setID(cursor.getInt(cursor.getColumnIndex(KEY_REMOTE_ID)));
-                    remote.setVendor(cursor.getInt(cursor.getColumnIndex(KEY_REMOTE_VENDOR)));
-
                     // Match the type string pulled from the db to one of the enums
                     for(Remote.deviceType t : Remote.deviceType.values()) {
                         if(t.toString().equals(cursor.getString(cursor.getColumnIndex(KEY_REMOTE_TYPE))))
-                            remote.setType(t);
+                            type = t;
                     }
 
+                    // MONSTER of a query/constructor. Syntax:
+                    // Remote(int id, ArrayList<String> codes, int vendor, deviceType type, String name, boolean current, String hash)
+
+                    Remote remote = new Remote(cursor.getInt(cursor.getColumnIndex(KEY_REMOTE_ID)), null, cursor.getInt(cursor.getColumnIndex(KEY_REMOTE_VENDOR)), type,
+                            cursor.getString(cursor.getColumnIndex(KEY_REMOTE_NAME)), (cursor.getInt(cursor.getColumnIndex(KEY_CURRENT)) == 1),
+                            cursor.getString(cursor.getColumnIndex(KEY_REMOTE_HASH)));
+
                     // Retrieve codes for this remote
-                    remote.setCodes(getCodesForRemote(remote));
+                    remote.setCodes(getCodesForRemote(cursor.getInt(cursor.getColumnIndex(KEY_REMOTE_ID))));
 
                     remotes.add(remote);
 
@@ -147,6 +153,7 @@ public class RemotesDBHelper extends SQLiteOpenHelper {
         } finally {
             if(cursor != null && !cursor.isClosed())
                 cursor.close();
+            db.close();
         }
         return remotes;
     }
@@ -160,12 +167,15 @@ public class RemotesDBHelper extends SQLiteOpenHelper {
         long status = -1;
 
 
+        // Add all single values
         db.beginTransaction();
         try {
             ContentValues rinfo = new ContentValues();
-            rinfo.put(KEY_REMOTE_NAME, remote.name);
-            rinfo.put(KEY_REMOTE_TYPE, remote.type.toString());
-            rinfo.put(KEY_REMOTE_VENDOR, remote.vendor);
+            rinfo.put(KEY_REMOTE_NAME, remote.getName());
+            rinfo.put(KEY_REMOTE_TYPE, remote.getType().toString());
+            rinfo.put(KEY_REMOTE_VENDOR, remote.getVendorId());
+            rinfo.put(KEY_CURRENT, remote.getCurrent() ? 1 : 0);
+            rinfo.put(KEY_REMOTE_HASH, remote.getHash());
             status = db.insertOrThrow(TABLE_REMOTES, null, rinfo);
             db.setTransactionSuccessful();
 
@@ -178,8 +188,9 @@ public class RemotesDBHelper extends SQLiteOpenHelper {
             db.endTransaction();
         }
 
+        // Add all codes
         for(String c : remote.getCodes() ){
-            // The button value is set to "null" since I haven't implemented that yet.
+            // No button values since I haven't implemented that yet.
 
             if(!addCode(status, c))
                 Log.d("DB", "Problem adding code(s).");
@@ -190,7 +201,6 @@ public class RemotesDBHelper extends SQLiteOpenHelper {
 
     protected boolean addCode(long status, String code){
         SQLiteDatabase db = getWritableDatabase();
-        //long status = -1;
 
         db.beginTransaction();
         try {
@@ -200,7 +210,7 @@ public class RemotesDBHelper extends SQLiteOpenHelper {
             // NOTE this is unused so far
             cinfo.put(KEY_CODE_BUTTON, 0);
 
-            status = db.insertOrThrow(TABLE_CODES, null, cinfo);
+            db.insertOrThrow(TABLE_CODES, null, cinfo);
             db.setTransactionSuccessful();
         } catch (Exception e) {
             Log.d("DB", "Error adding code(s) to db.");
@@ -213,6 +223,7 @@ public class RemotesDBHelper extends SQLiteOpenHelper {
         return true;
     }
 
+    // Return all codes for a given remote
     public ArrayList<String> getCodesForRemote(Remote remote){
         ArrayList<String> codes = new ArrayList<>();
         SQLiteDatabase db = getReadableDatabase();
@@ -227,6 +238,28 @@ public class RemotesDBHelper extends SQLiteOpenHelper {
             }
         } catch (Exception e){
             Log.d("DB", "Error retrieving codes for remote ID: " + remote.getID());
+        } finally {
+            if(cursor != null && !cursor.isClosed())
+                cursor.close();
+        }
+        return codes;
+    }
+
+    // Return all codes for a given remote ID (probably lighter on memory resources)
+    public ArrayList<String> getCodesForRemote(long id){
+        ArrayList<String> codes = new ArrayList<>();
+        SQLiteDatabase db = getReadableDatabase();
+        final String GET_CODES_FOR_REMOTE = "SELECT * FROM " + TABLE_CODES +
+                " WHERE " + KEY_CODE_REMOTE_ID_FK + " LIKE " + id;
+        Cursor cursor = db.rawQuery(GET_CODES_FOR_REMOTE, null);
+        try {
+            if(cursor.moveToFirst()){
+                do {
+                    codes.add(cursor.getString(cursor.getColumnIndex(KEY_CODE)));
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e){
+            Log.d("DB", "Error retrieving codes for remote ID: " + id);
         } finally {
             if(cursor != null && !cursor.isClosed())
                 cursor.close();
@@ -266,14 +299,12 @@ public class RemotesDBHelper extends SQLiteOpenHelper {
     public boolean addVendor(int id, String name) {
         SQLiteDatabase db = getWritableDatabase();
 
-        long vendorID = -1;
-
         db.beginTransaction();
         try {
             ContentValues vinfo = new ContentValues();
             vinfo.put(KEY_VENDOR_ID, id);
             vinfo.put(KEY_VENDOR_NAME, name);
-            vendorID = db.insertOrThrow(TABLE_VENDORS, null, vinfo);
+            db.insertOrThrow(TABLE_VENDORS, null, vinfo);
             db.setTransactionSuccessful();
         } catch (Exception e) {
             Log.d("DB", "Error adding vendor to db");
@@ -286,6 +317,7 @@ public class RemotesDBHelper extends SQLiteOpenHelper {
         return true;
     }
 
+    // Return vendor ID for a given vendor name
     public int getVendor(String name) {
         int id = -1;
         SQLiteDatabase db = getReadableDatabase();
@@ -306,8 +338,9 @@ public class RemotesDBHelper extends SQLiteOpenHelper {
         return id;
     }
 
+    // Return name for a given vendor ID
     public String getVendor(int id){
-        String name = "";
+        String name = "NO_NAME"; // Initial value so as not to return "", should be overwritten.
         SQLiteDatabase db = getReadableDatabase();
         final String GET_VENDOR_NAME = "SELECT * FROM " + TABLE_VENDORS +
                 " WHERE _id=\"" + id + "\"" + " LIMIT 1";
@@ -323,9 +356,6 @@ public class RemotesDBHelper extends SQLiteOpenHelper {
         return name;
 
     }
-
-
-
 
 
     protected void purgeDB(){
