@@ -112,11 +112,11 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/textView3"
+            android:id="@+id/currentText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/currentRemote" />
+            android:text="@string/nullRemote" />
     </LinearLayout>
 
     <ImageButton

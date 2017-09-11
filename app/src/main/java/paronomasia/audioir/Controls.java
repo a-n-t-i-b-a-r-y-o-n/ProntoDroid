@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class Controls extends AppCompatActivity {
@@ -24,8 +25,6 @@ public class Controls extends AppCompatActivity {
     TODO
     Soooo much... Including:
 
-        - Load a remote class file using remote->current boolean
-        - Make the Current Remote text accurate to the loaded remote instance
         - Make the buttons (re)arrangeable
         - Link between the enum Pressed and resource files
         - Implement the other miniFAB buttons (adding buttons, editing buttons, etc.)
@@ -37,6 +36,8 @@ public class Controls extends AppCompatActivity {
 
     static final int OPEN_LIST_REQUEST = 1;
     public boolean fabMenu = false;
+    RemotesDBHelper rdb;
+    Remote current;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,11 +47,6 @@ public class Controls extends AppCompatActivity {
         decorView.setSystemUiVisibility(uiOptions);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_controls);
-
-        // Purge DB on startup for now
-        RemotesDBHelper rdb = new RemotesDBHelper(Controls.this);
-        rdb.purgeDB();
-
 
 
         FloatingActionButton fab = findViewById(R.id.fab);
@@ -66,6 +62,15 @@ public class Controls extends AppCompatActivity {
         ImageButton volDNButton = findViewById(R.id.volDNButton);
         ImageButton muteButton = findViewById(R.id.muteButton);
         ImageButton testProntoButton = findViewById(R.id.testProntoButton);
+
+
+
+
+
+        // Purge DB on startup for now
+        this.rdb = new RemotesDBHelper(Controls.this);
+        rdb.purgeDB();
+
 
 
         testProntoButton.setOnClickListener(v -> {
@@ -133,6 +138,17 @@ public class Controls extends AppCompatActivity {
         int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
         decorView.setSystemUiVisibility(uiOptions);
         super.onResume();
+
+        TextView currentText = findViewById(R.id.currentText);
+
+        this.current = rdb.getCurrentRemote();
+        if(this.current != null){
+            currentText.setText(current.getName());
+        }
+        else {
+            currentText.setText(R.string.nullRemote);
+        }
+
     }
 
     @Override

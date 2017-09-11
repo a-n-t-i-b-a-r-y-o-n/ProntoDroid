@@ -134,12 +134,9 @@ public class RemotesDBHelper extends SQLiteOpenHelper {
                     // MONSTER of a query/constructor. Syntax:
                     // Remote(int id, ArrayList<String> codes, int vendor, deviceType type, String name, boolean current, String hash)
 
-                    Remote remote = new Remote(cursor.getInt(cursor.getColumnIndex(KEY_REMOTE_ID)), null, cursor.getInt(cursor.getColumnIndex(KEY_REMOTE_VENDOR)), type,
+                    Remote remote = new Remote(cursor.getInt(cursor.getColumnIndex(KEY_REMOTE_ID)), getCodesForRemote(cursor.getColumnIndex(KEY_REMOTE_ID)), cursor.getInt(cursor.getColumnIndex(KEY_REMOTE_VENDOR)), type,
                             cursor.getString(cursor.getColumnIndex(KEY_REMOTE_NAME)), (cursor.getInt(cursor.getColumnIndex(KEY_CURRENT)) == 1),
                             cursor.getString(cursor.getColumnIndex(KEY_REMOTE_HASH)));
-
-                    // Retrieve codes for this remote
-                    remote.setCodes(getCodesForRemote(cursor.getInt(cursor.getColumnIndex(KEY_REMOTE_ID))));
 
                     remotes.add(remote);
 
@@ -165,6 +162,10 @@ public class RemotesDBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
 
         long status = -1;
+
+        if(remote.getCurrent()) {
+            setNoCurrent();
+        }
 
 
         // Add all single values
@@ -267,6 +268,37 @@ public class RemotesDBHelper extends SQLiteOpenHelper {
         return codes;
     }
 
+    // Return the current remote or null
+    public Remote getCurrentRemote(){
+
+        SQLiteDatabase db = getReadableDatabase();
+        Remote current = null;
+        Remote.deviceType type = Remote.deviceType.OTHER;
+
+        final String CURRENT_QUERY = "SELECT * FROM " + TABLE_REMOTES +
+                " WHERE " + KEY_CURRENT + " = 1";
+        Cursor cursor = db.rawQuery(CURRENT_QUERY, null);
+        try {
+            if (cursor.moveToFirst()){
+                for(Remote.deviceType t : Remote.deviceType.values()) {
+                    if(t.toString().equals(cursor.getString(cursor.getColumnIndex(KEY_REMOTE_TYPE))))
+                        type = t;
+                }
+                current = new Remote(cursor.getInt(cursor.getColumnIndex(KEY_REMOTE_ID)), getCodesForRemote(cursor.getColumnIndex(KEY_REMOTE_ID)),
+                        cursor.getInt(cursor.getColumnIndex(KEY_REMOTE_VENDOR)), type, cursor.getString(cursor.getColumnIndex(KEY_REMOTE_NAME)),
+                        cursor.getInt(cursor.getColumnIndex(KEY_CURRENT)) == 1, cursor.getString(cursor.getColumnIndex(KEY_REMOTE_HASH)));
+            }
+        } catch (Exception e) {
+            Log.d("CURRENT", "Error getting current remote");
+        } finally {
+            if(cursor != null && !cursor.isClosed())
+                cursor.close();
+        }
+
+        return current;
+
+    }
+
     public ArrayList<String> getAllVendors(){
 
         final String VENDOR_QUERY = "SELECT " + KEY_VENDOR_NAME + " from " + TABLE_VENDORS;
@@ -357,6 +389,21 @@ public class RemotesDBHelper extends SQLiteOpenHelper {
 
     }
 
+    // Set the current flag to 0 for all remotes
+    public void setNoCurrent() {
+        SQLiteDatabase db = getWritableDatabase();
+        db.beginTransaction();
+        try {
+            ContentValues currentBit = new ContentValues();
+            currentBit.put(KEY_CURRENT, 0);
+            db.insertOrThrow(TABLE_REMOTES, null, currentBit);
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            Log.d("CURRENT", "Error setting current bits to 0");
+        } finally {
+            db.endTransaction();
+        }
+    }
 
     protected void purgeDB(){
         SQLiteDatabase db = getWritableDatabase();

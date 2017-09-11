@@ -112,7 +112,7 @@ class Remote {
         this.current = status;
     }
 
-    // ~ UNUSED YET ~  is this the current remote?
+    // Is this the current remote?
     public boolean getCurrent(){
         return this.current;
     }
