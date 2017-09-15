@@ -47,6 +47,20 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="paronomasia.audioir.Controls" />
         </activity>
+        <activity
+            android:name=".AddCodes"
+            android:label="@string/title_activity_add_codes"
+            android:theme="@style/AppTheme">
+        </activity>
+        <activity
+            android:name=".CodeList"
+            android:label="@string/title_activity_code_list"
+            android:parentActivityName=".Controls"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="paronomasia.audioir.Controls" />
+        </activity>
     </application>
 
 </manifest>

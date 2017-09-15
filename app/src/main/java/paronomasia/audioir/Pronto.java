@@ -27,14 +27,6 @@ public class Pronto {
     private int c1LeadOutOn = 0;
     private int c1LeadOutOff = 0;
 
-    Handler handler = new Handler();
-
-    int sampleRate = 44100;  // ?
-    int totalSamples = (int) this.duration * sampleRate; // will that work?
-    double sample[];
-    double freqOfTone = this.frequency; // hz
-    byte generatedSnd[];
-
 
     // Pass in raw Pronto Hex to the constructor, it'll do the rest.
     Pronto(String hex){
@@ -68,7 +60,7 @@ public class Pronto {
     }
 
 
-    public void analyze(){
+    public boolean analyze(){
         // Identify total duration for c1 and the On/Off values.
         // I think this may only be valid for NEC formats?
 
@@ -99,93 +91,71 @@ public class Pronto {
         this.c1LeadInOff = Integer.parseInt(this.hex.get(5), 16);
         this.c1LeadOutOn = Integer.parseInt(this.hex.get(4 + pairCount - 2), 16);
         this.c1LeadOutOff = Integer.parseInt(this.hex.get(4 + pairCount - 1), 16);
+	return true;
+    }
+
+    // Consider starting a new thread for this task:
+    public void generateAndPlay(){
+        if(this.duration == 0){
+            if(!analyze()){
+	    	// Something's wrong with the code.
+		Log.d("PRONTO", "Error handling Pronto Hex");
+	    }
+	}
+
+        // Use the generate_*_Samples() functions below and combine their output into an AudioTrack
+
+        int count = (int) (44100.0 * 2.0 * (this.duration)) & ~1;
+        short[] samples = new short[count];
+        int offset = 0;
+        for(int i = 0; i < this.pairCount; i++){
+            int currentVal = Integer.parseInt(this.hex.get(4 + i), 16);
+            short[] generated;
+            if(i % 1 == 0){
+                generated = generateTones(this.pulse * currentVal);
+            }
+            else {
+                generated = generateSilence(this.pulse * currentVal);
+            }
+            for(int j = 0; j < generated.length; j++){
+                samples[offset + j] = generated[j];
+            }
+            offset += generated.length;
+        }
+
+        // Will this even work?
+
+        AudioTrack track = new AudioTrack(AudioManager.STREAM_MUSIC, 44100,
+                AudioFormat.CHANNEL_OUT_STEREO, AudioFormat.ENCODING_PCM_16BIT,
+                count * (Short.SIZE / 8), AudioTrack.MODE_STATIC);
+        track.write(samples, 0, count);
+
+        track.play();
+
     }
 
 
-    public void play(){
+    // See here: https://gist.github.com/slightfoot/6330866
 
-        // Extensive help from an answer here:
-        // https://stackoverflow.com/questions/2413426/playing-an-arbitrary-tone-with-android
-
-        // Read the tokenized hex and play it at the frequency.
-        // So far it just plays the single signal frequency steadily for the duration.
-        // I still need to get it to play the actual patterns. THIS IS NOT TESTED YET.
-
-        // TODO:
-        //  - Start a new thread. In that thread:
-        //      - Play like the code below for the on patterns
-        //      - Do nothing for the off patterns.
-
-        this.totalSamples = (int) this.duration * sampleRate; // will that work?
-        this.sample = new double[totalSamples];
-        this.freqOfTone = this.frequency; // hz
-        this.generatedSnd = new byte[2 * this.totalSamples];
-
-        /*
-        final Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Log.d("EVENT", "genTone()");
-                genTone();
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Log.d("EVENT", "playSound()");
-                        playSound();
-                    }
-                });
-            }
-        });
-        thread.start();
-        */
-        genTone();
-        playSound();
-
-
-
-
-}
-    void playSound(){
-        int minSize = AudioTrack.getMinBufferSize(sampleRate,
-                AudioFormat.CHANNEL_OUT_STEREO,
-                AudioFormat.ENCODING_PCM_16BIT);
-
-        AudioTrack audioTrack = new AudioTrack(AudioManager.STREAM_MUSIC,
-                sampleRate, AudioFormat.CHANNEL_OUT_STEREO,
-                AudioFormat.ENCODING_PCM_16BIT, minSize,
-                AudioTrack.MODE_STREAM);
-
-        audioTrack.play();
-        audioTrack.write(generatedSnd, 0, 2*totalSamples);
+    private short[] generateTones(float duration) {
+        int count = (int)(44100.0 * 2.0 * duration) & ~1;
+        short[] samples = new short[count];
+        for(int i = 0; i < count; i += 2){
+            short sample = (short)(Math.sin(2 * Math.PI * i / (44100.0 / this.frequency)) * 0x7FFF);
+            samples[i] = sample;
+            samples[i + 1] = sample;
+        }
+        return samples;
     }
 
-    void genTone(){
-        // fill out the array
-            for(int i = 0; i < this.pairCount; i++) {
-                int numSamples = (int)  (this.pulse * Integer.parseInt(this.hex.get(4 + i), 16)) * sampleRate;
-                if( i % 2 == 0){
-                    for (int j = 0; j < numSamples; ++j) {
-                        //  float angular_frequency =
-                        sample[j] = Math.sin(2 * Math.PI * j / (sampleRate / freqOfTone));
-                    }
-                }
-                else {
-                    for(int j = 0; j < numSamples; ++j)
-                        sample[j] = 0; // ?
-                }
-            }
-
-
-            int i = 0;
-
-            // convert to 16 bit pcm sound array
-            // assumes the sample buffer is normalised.
-            for (double dVal : sample) {
-                short val = (short) (dVal * 32767);
-                generatedSnd[i++] = (byte) (val & 0x00ff);
-                generatedSnd[i++] = (byte) ((val & 0xff00) >>> 8);
-            }
-
+    private short[] generateSilence(float duration){
+        int count = (int)(44100.0 * 2.0 * duration) & ~1;
+        short[] samples = new short[count];
+        for(int i = 0; i < count; i+=2){
+            samples[i] = 0;
+            samples[i + 1] = 0;
+        }
+        return samples;
     }
 
 

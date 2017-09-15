@@ -19,18 +19,17 @@
     <string name="remotetitle_sanyo1">Sanyo TV</string>
     <string name="remotetitle_sony1">Sony Speakers</string>
 
-
     <!-- AddRemote Activity -->
     <string name="nameHint">Remote Name</string>
-    <string name="codesHint">Enter Codes...</string>
+    <string name="codesHint">Enter Codes&#8230;</string>
 
+    <!-- CodeList Activity -->
+    <string name="title_activity_code_list">Code List</string>
+    <string name="add_code">Add Code</string>
 
-
-
-
-
-
-
+    <!-- Code names -->
+    <string name="codename_power">Power</string>
+    <string name="codename_input">Input</string>
 
 
     <!-- Example Strings related to Settings -->
@@ -105,4 +104,5 @@
 
     <string name="pref_title_vibrate">Vibrate</string>
     <string name="title_activity_add_remote">AddRemote</string>
+    <string name="title_activity_add_codes">AddCodes</string>
 </resources>

@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:theme="@style/Base.ThemeOverlay.AppCompat.Dark.ActionBar"
-    android:tooltipText="Enter the remote name here."
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="paronomasia.audioir.AddRemote"
     tools:showIn="@layout/activity_add_remote">
@@ -32,10 +31,11 @@
 
     <Spinner
         android:id="@+id/vendorMenu"
+        style="@android:style/Widget.Material.Spinner"
         android:layout_width="292dp"
+
+
         android:layout_height="41dp"
-
-
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"

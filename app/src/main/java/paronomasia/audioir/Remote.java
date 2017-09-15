@@ -1,5 +1,8 @@
 package paronomasia.audioir;
 
+import android.util.Log;
+
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 /**
@@ -10,15 +13,21 @@ class Remote {
 
     /*
     TODO
-        - Consider changing device type to string?
-        - Clean up unnecessary constructors and their usages.
+	- Complete the enums lists.
      */
 
-    public enum deviceType {TV, STEREO, SETTOP, DVR, AC, SURROUND, COMPUTER, PROJECTOR, SATELLITE, VCR, AMPLIFIER, OTHER}
+
+    // The following enums are referenced with an integer in the database corresponding
+    // to each item's index to increase speed and decrease memory costs.
+
+    // These are the different types of devices one can have. You cannot add a new type.
+    public enum deviceType {TV, STEREO, SETTOP, DVR, AC, SURROUND, COMPUTER, PROJECTOR, SATELLITE, VCR, AMPLIFIER, DVDPLAYER, OTHER}
+
+
 
 
     private long remoteID = 0;    // This *should* always be set by the DB Handler before actual use.
-    private ArrayList<String> codes = new ArrayList<>();   // An array of strings representing the different codes from the DB
+    private ArrayList<Code> codes;   // An array of strings representing the different codes from the DB
     private int vendor;    // The title of the vendor (used in identification)
     private deviceType type;      // The type of device the remote is for. Uses above enums.
     private String name;
@@ -26,18 +35,18 @@ class Remote {
     private String hash;
 
     // Complete constructor, used with a known ID value (e.g. when pulling from the database)
-    Remote(int id, ArrayList<String> codes, int vendor, deviceType type, String name, boolean current, String hash) {
+    Remote(int id, ArrayList<Code> codes, int vendor, int type, String name, boolean current, String hash) {
         this.remoteID = id;
         this.codes = codes;
         this.vendor = vendor;
-        this.type = type;
+        setType(type);
         this.name = name;
         this.current = current;
         this.hash = hash;
     }
 
     // Everything but the id (set here to -1). Used in AddRemote.class methods for adding fresh remotes to DB
-    Remote(ArrayList<String> codes, int vendor, deviceType type, String name, boolean current, String hash){
+    Remote(ArrayList<Code> codes, int vendor, int type, String name, boolean current, String hash){
         this(-1, codes, vendor, type, name, current, hash);
     }
 
@@ -77,9 +86,22 @@ class Remote {
         this.type = type;
     }
 
-    // return Remote.deviceType of the type
-    public deviceType getType() {
-        return this.type;
+    // set the type by the ordinal
+    public void setType(int i){
+        for(deviceType t : deviceType.values()) {
+            if (t.ordinal() == i){
+                this.type = t;
+            }
+        }
+    }
+
+    // return int of device type ordinal
+    public int getType() {
+        return this.type.ordinal();
+    }
+
+    public String getTypeString() {
+        return this.type.toString();
     }
 
     // set the remote name
@@ -93,17 +115,18 @@ class Remote {
     }
 
     // return all codes for a given remote
-    public ArrayList<String> getCodes(){
+    public ArrayList<Code> getCodes(){
         return this.codes;
     }
 
     // add an ArrayList<> of codes
-    public void setCodes(ArrayList<String> codes){
+    public void setCodes(ArrayList<Code> codes){
         this.codes = codes;
     }
 
     // add a single code to existing ArrayList<> (should already be in DB - maybe implement a reload() function instead?)
-    public void addCode(String code){
+    public void addCode(String hex, int type, String name){
+        Code code = new Code(hex, type, name);
         this.codes.add(code);
     }
 

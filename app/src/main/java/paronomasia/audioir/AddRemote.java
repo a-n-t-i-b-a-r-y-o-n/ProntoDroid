@@ -1,5 +1,6 @@
 package paronomasia.audioir;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -23,7 +24,8 @@ public class AddRemote extends AppCompatActivity implements OnItemSelectedListen
     /*
     TODO
         - Handle adding a new vendor
-        - Handle tracking a new device type?
+        - Handle adding a new device type? (add to enum list)
+	- Add a checkbox for current boolean
 
     */
 
@@ -53,12 +55,14 @@ public class AddRemote extends AppCompatActivity implements OnItemSelectedListen
 
             if (!remoteNameField.getText().toString().equals("")) {
                 // !!! DB TEST!!!
-                ArrayList<String> s1 = new ArrayList<>();
-                s1.add(codeField.getText().toString());
+                ArrayList<Code> al1 = new ArrayList<>();
+                Code c1 = new Code(codeField.getText().toString(), 0, "");
+                al1.add(c1);
 
-                // Remote(ArrayList<String> codes, int vendor, deviceType type, String name, boolean current, String hash)
-                Remote r1 = new Remote(s1, rdb.getVendor(vendorMenu.getSelectedItem().toString()),
-                        (Remote.deviceType) typeMenu.getSelectedItem(), remoteNameField.getText().toString(), true, "");
+
+                // Remote(ArrayList<Code> codes, int vendor, int type, String name, boolean current, String hash)
+                Remote r1 = new Remote(al1, rdb.getVendor(vendorMenu.getSelectedItem().toString()),
+                         typeMenu.getSelectedItemPosition(), remoteNameField.getText().toString(), true, "");
                 if(rdb.addRemote(r1)) {
                     Snackbar.make(v, "Wrote successfully.", Snackbar.LENGTH_SHORT)
                             .setAction("Action", null).show();
@@ -96,7 +100,6 @@ public class AddRemote extends AppCompatActivity implements OnItemSelectedListen
 
         Button readDBButton = findViewById(R.id.readDBButton);
         readDBButton.setOnClickListener(v -> {
-            //RemotesDBHelper rdbh = new RemotesDBHelper(AddRemote.this);
             ArrayList<Remote> list = rdb.getAllRemotes();
             TextView output = findViewById(R.id.outputField);
 
@@ -106,8 +109,8 @@ public class AddRemote extends AppCompatActivity implements OnItemSelectedListen
                     output.setText(output.getText() + "\nID: " + list.get(i).getID() +
                             "\tNAME: " + list.get(i).getName() +
                             "\tVENDOR: " + rdb.getVendor(list.get(i).getVendorId()) +
-                            "\tTYPE: " + list.get(i).getType().toString() +
-                            "\nCODES: " + list.get(i).getCodes().toString());
+                            "\tTYPE: " + list.get(i).getTypeString() +
+                            "\nCODES: " + list.get(i).getCodes().get(0).getHex().toString());
                 }
             } else
                 output.setText("Empty.");
@@ -143,10 +146,13 @@ public class AddRemote extends AppCompatActivity implements OnItemSelectedListen
                     //Toast.makeText(adapterView.getContext(), rdb.getVendor(adapterView.getItemAtPosition(i).toString()) + "", Toast.LENGTH_SHORT).show();
                     //Toast.makeText(adapterView.getContext(), adapterView.getItemAtPosition(i).toString(), Toast.LENGTH_SHORT).show();
                 }
+                ((TextView) adapterView.getChildAt(0)).setTextColor(Color.WHITE);
                 break;
 
             case R.id.typeMenu:
                 // do the normal thing
+                ((TextView) adapterView.getChildAt(0)).setTextColor(Color.WHITE);
+                break;
         }
     }
 

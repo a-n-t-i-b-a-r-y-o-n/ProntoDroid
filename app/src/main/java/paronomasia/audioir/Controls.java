@@ -23,16 +23,10 @@ public class Controls extends AppCompatActivity {
 
     /*
     TODO
-    Soooo much... Including:
-
         - Make the buttons (re)arrangeable
-        - Link between the enum Pressed and resource files
-        - Implement the other miniFAB buttons (adding buttons, editing buttons, etc.)
+        - Link between each botton and its Code.buttonType (for drawables and codes)
+        - Implement the settings MiniFAB
      */
-
-    public enum Pressed {
-        POWER, INPUT, VOLUP, VOLDN, CHANUP, CHANDN, UP, DOWN, LEFT, RIGHT, SELECT, MENU
-    }
 
     static final int OPEN_LIST_REQUEST = 1;
     public boolean fabMenu = false;
@@ -73,6 +67,7 @@ public class Controls extends AppCompatActivity {
 
 
 
+        // test out the ProntoHEX generation/playing with the default Sanyo Power
         testProntoButton.setOnClickListener(v -> {
             Pronto p1 = new Pronto("0000 006C 0022 0002 015B 00AD 0016 0016 0016 0016 " +
                     "0016 0016 0016 0041 0016 0041 0016 0041 0016 0016 0016 0016 0016 0041 0016 " +
@@ -80,8 +75,7 @@ public class Controls extends AppCompatActivity {
                     "0016 0041 0016 0016 0016 0016 0016 0041 0016 0016 0016 0016 0016 0016 0016 " +
                     "0041 0016 0016 0016 0041 0016 0041 0016 0016 0016 0041 0016 0041 0016 0041 " +
                     "0016 05F7 015B 0057 0016 0E6C");
-            p1.analyze();
-            p1.play();
+            p1.generateAndPlay();
             p1.debugPrintHex();
         });
 
@@ -113,18 +107,18 @@ public class Controls extends AppCompatActivity {
 
         minifab_add.setOnClickListener(v -> {
             closeFabMenu();
-            Snackbar.make(v, "Adding buttons isn't implemented yet...", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show();
+            Intent i = new Intent(Controls.this, CodeList.class);
+            startActivity(i);
         });
 
 
-        pwrButton.setOnClickListener(v -> transmitCode(R.raw.sanyopower, Pressed.POWER));
+        pwrButton.setOnClickListener(v -> transmitCode(R.raw.sanyopower, Code.buttonType.POWER));
 
-        inputButton.setOnClickListener(v -> transmitCode(R.raw.sanyoinput, Pressed.INPUT));
+        inputButton.setOnClickListener(v -> transmitCode(R.raw.sanyoinput, Code.buttonType.INPUT));
 
-        volUPButton.setOnClickListener(v -> transmitCode(R.raw.sanyovolup, Pressed.VOLUP));
+        volUPButton.setOnClickListener(v -> transmitCode(R.raw.sanyovolup, Code.buttonType.VOLUP));
 
-        volDNButton.setOnClickListener(v -> transmitCode(R.raw.sanyovoldown, Pressed.VOLDN));
+        volDNButton.setOnClickListener(v -> transmitCode(R.raw.sanyovoldown, Code.buttonType.VOLDN));
 
         muteButton.setOnClickListener(v -> Toast.makeText(v.getContext(), "Mute", Toast.LENGTH_SHORT).show());
 
@@ -283,7 +277,7 @@ public class Controls extends AppCompatActivity {
     }
 
 
-    public void transmitCode(int wavFile, Pressed pressed){
+    public void transmitCode(int wavFile, Code.buttonType type){
 
         // Determine and set max volume
         AudioManager am = (AudioManager) getSystemService(AUDIO_SERVICE);
