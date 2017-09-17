@@ -5,10 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/black"
-    android:theme="@style/Platform.ThemeOverlay.AppCompat.Dark"
-    tools:context="paronomasia.audioir.RemoteList">
+    tools:context="paronomasia.audioir.EditCode">
 
-    <include layout="@layout/content_remote_list" />
+    <include layout="@layout/content_edit_code" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
@@ -16,6 +15,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@drawable/ic_add_white_48dp" />
+        app:srcCompat="@drawable/ic_check_white_48dp" />
 
 </android.support.design.widget.CoordinatorLayout>

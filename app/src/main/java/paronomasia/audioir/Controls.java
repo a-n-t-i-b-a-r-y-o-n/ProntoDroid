@@ -7,17 +7,16 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
 
 public class Controls extends AppCompatActivity {
 
@@ -100,9 +99,9 @@ public class Controls extends AppCompatActivity {
 
         minifab_list.setOnClickListener(v -> {
             closeFabMenu();
-            Intent i = new Intent(Intent.ACTION_VIEW);
-            i.setClassName("paronomasia.audioir", "paronomasia.audioir.RemoteList");
-            startActivityForResult(i, OPEN_LIST_REQUEST);
+            Intent i = new Intent(this, RemoteList.class);
+            startActivity(i);
+
         });
 
         minifab_add.setOnClickListener(v -> {

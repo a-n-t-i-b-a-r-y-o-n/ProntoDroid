@@ -43,7 +43,6 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         android:src="@drawable/remote_icon_48dp"
-        app:backgroundTint="@color/fabColor"
         app:srcCompat="@drawable/remote_icon_48dp" />
 
 

@@ -1,89 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/MainRecycler"
+    android:scrollbars="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="10dp"
-    android:theme="@android:style/ThemeOverlay.Material.Dark"
+    android:theme="@style/Platform.ThemeOverlay.AppCompat.Dark"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="paronomasia.audioir.RemoteList"
     tools:showIn="@layout/activity_remote_list">
 
-    <RadioGroup
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:divider="@android:drawable/dialog_holo_light_frame"
-            android:dividerPadding="@dimen/text_margin">
-
-            <RadioButton
-                android:id="@+id/radioButton1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:layout_margin="10dp"
-                android:layout_weight="1"
-                android:checked="true"
-                android:layoutDirection="rtl"
-                android:text="@string/remotetitle_sanyo1" />
-
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
-
-            <RadioButton
-                android:id="@+id/radioButton2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:layout_margin="10dp"
-                android:layout_weight="1"
-                android:layoutDirection="rtl"
-                android:text="@string/remotetitle_sony1" />
-        </TableRow>
-
-        <Space
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            android:layout_weight="1" />
-
-        <TableRow
-            android:id="@+id/addRemoteTR"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:divider="@android:color/background_light"
-            android:dividerPadding="@dimen/fab_margin">
-
-            <TextView
-                android:id="@+id/textView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:layout_weight="3"
-                android:text="@string/add_remote"
-                android:textAlignment="center"
-                android:textSize="18sp" />
-
-            <ImageButton
-                android:id="@+id/addRemoteButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right|center_vertical"
-                android:layout_margin="10dp"
-                android:layout_weight="1"
-                android:background="@android:color/transparent"
-                app:srcCompat="@drawable/ic_add_white_24dp" />
-        </TableRow>
-
-    </RadioGroup>
-
-</ScrollView>
+</android.support.v7.widget.RecyclerView>

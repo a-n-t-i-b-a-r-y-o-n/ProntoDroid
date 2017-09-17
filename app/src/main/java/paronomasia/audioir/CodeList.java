@@ -3,9 +3,12 @@ package paronomasia.audioir;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TableRow;
+
+import java.util.ArrayList;
 
 public class CodeList extends AppCompatActivity {
 
@@ -14,6 +17,9 @@ public class CodeList extends AppCompatActivity {
         - Implement some type of scrolling list view (RecyclerView? ListView? Nested Scrolling View?)
         - Make this actually pull from the DB
      */
+
+    Remote current;
+    RemotesDBHelper rdb = new RemotesDBHelper(CodeList.this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +53,18 @@ public class CodeList extends AppCompatActivity {
         decorView.setSystemUiVisibility(uiOptions);
 
         super.onResume();
+
+
+
+        // Get all the codes from our current remote
+        if(!rdb.getAllRemotes().isEmpty()) {
+            ArrayList<Code> codes = rdb.getCodesForRemote(rdb.getCurrentRemote().getID());
+        }
+        else
+            Log.d("DB", "The databse is empty though...");
+
+        // Create the table with all of the codes and their symbols
+
     }
 
 }

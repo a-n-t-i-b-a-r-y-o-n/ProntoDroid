@@ -1,28 +1,25 @@
 package paronomasia.audioir;
 
-import android.app.ActionBar;
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageButton;
-import android.widget.TableRow;
+
+        /* TODO:
+            - Prompt the user to add a remote if the database is empty
+         */
 
 public class RemoteList extends AppCompatActivity {
 
-    /*
-    TODO
-        - Implement some type of scrolling list view (RecyclerView? ListView? Nested Scrolling View?)
-        - Make this actually pull from the DB
-     */
+    private RecyclerView recycler;
+    private RecyclerView.Adapter rAdapter;
+    private RecyclerView.LayoutManager rLayoutManager;
+    private RemotesDBHelper rdb;
 
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         // Hide the status bar (do this first!)
         View decorView = getWindow().getDecorView();
@@ -32,17 +29,21 @@ public class RemoteList extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_remote_list);
 
+        rdb = new RemotesDBHelper(this);
 
-        TableRow addButton = findViewById(R.id.addRemoteTR);
-        addButton.setOnClickListener(v ->{
+        FloatingActionButton fab = findViewById(R.id.fab);
+        recycler = findViewById(R.id.MainRecycler);
 
-            Intent i = new Intent(RemoteList.this, AddRemote.class);
+        recycler.setHasFixedSize(true);
+
+        rLayoutManager = new LinearLayoutManager(this);
+        recycler.setLayoutManager(rLayoutManager);
+
+
+        fab.setOnClickListener(v -> {
+            Intent i = new Intent(this, AddRemote.class);
             startActivity(i);
-
         });
-        ImageButton plusButton = findViewById(R.id.addRemoteButton);
-        plusButton.setOnClickListener(v -> addButton.callOnClick());
-
 
     }
 
@@ -53,24 +54,14 @@ public class RemoteList extends AppCompatActivity {
         int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
         decorView.setSystemUiVisibility(uiOptions);
 
+        if(rdb.getAllRemotes() != null) {
+            rAdapter = new RemoteListAdapter(rdb.getAllRemotes());
+            recycler.setAdapter(rAdapter);
+        }
+        else
+            Log.d("DB", "Remotes DB empty...");
+
         super.onResume();
     }
 
-    @Override
-    protected void onStop(){
-        Bundle res = new Bundle();
-        res.putInt("remote", 1);
-        Intent i = new Intent();
-        i.putExtras(res);
-        if (getParent() == null) {
-            setResult(RemoteList.RESULT_OK, i);
-        } else {
-            getParent().setResult(RemoteList.RESULT_OK, i);
-        }
-        finish();
-        super.onStop();
-    }
-
 }
-
-

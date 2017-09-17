@@ -26,7 +26,7 @@ class Remote {
 
 
 
-    private long remoteID = 0;    // This *should* always be set by the DB Handler before actual use.
+    private long remoteID = -1;    // This *should* always be set by the DB Handler before actual use.
     private ArrayList<Code> codes;   // An array of strings representing the different codes from the DB
     private int vendor;    // The title of the vendor (used in identification)
     private deviceType type;      // The type of device the remote is for. Uses above enums.
@@ -126,11 +126,10 @@ class Remote {
 
     // add a single code to existing ArrayList<> (should already be in DB - maybe implement a reload() function instead?)
     public void addCode(String hex, int type, String name){
-        Code code = new Code(hex, type, name);
+        Code code = new Code(-1, this.remoteID, hex, type, name);
         this.codes.add(code);
     }
 
-    // ~ UNUSED YET ~ this should be called *from the db handler* to clear the current bit on all remotes, then set it for one.
     public void setCurrent(boolean status){
         this.current = status;
     }

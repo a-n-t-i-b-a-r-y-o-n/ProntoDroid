@@ -15,7 +15,6 @@
         android:layout_margin="@dimen/fab_margin"
         android:src="@drawable/ic_binary_file_white_48dp"
         android:visibility="invisible"
-        app:backgroundTint="@color/fabColor"
         app:fabSize="mini" />
 
     <android.support.design.widget.FloatingActionButton
@@ -26,7 +25,6 @@
         android:layout_margin="@dimen/fab_margin"
         android:src="@drawable/ic_settings_white_24dp"
         android:visibility="invisible"
-        app:backgroundTint="@color/fabColor"
         app:fabSize="mini" />
 
     <android.support.design.widget.FloatingActionButton
@@ -37,7 +35,6 @@
         android:layout_margin="@dimen/fab_margin"
         android:src="@drawable/ic_toc_white_24dp"
         android:visibility="invisible"
-        app:backgroundTint="@color/fabColor"
         app:fabSize="mini" />
 
 </FrameLayout>

@@ -24,8 +24,7 @@ public class AddRemote extends AppCompatActivity implements OnItemSelectedListen
     /*
     TODO
         - Handle adding a new vendor
-        - Handle adding a new device type? (add to enum list)
-	- Add a checkbox for current boolean
+	    - Add a checkbox for current boolean ?
 
     */
 
@@ -56,7 +55,7 @@ public class AddRemote extends AppCompatActivity implements OnItemSelectedListen
             if (!remoteNameField.getText().toString().equals("")) {
                 // !!! DB TEST!!!
                 ArrayList<Code> al1 = new ArrayList<>();
-                Code c1 = new Code(codeField.getText().toString(), 0, "");
+                Code c1 = new Code(-1, -1, codeField.getText().toString(), 0, "");
                 al1.add(c1);
 
 

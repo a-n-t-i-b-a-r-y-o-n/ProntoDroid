@@ -11,8 +11,8 @@
     <string name="nullRemote">N/A</string>
     <string name="title_activity_settings">Settings</string>
 
-    <!-- RemoteList Activity -->
-    <string name="title_activity_remote_list">Remote List</string>
+    <!-- OldRemoteList Activity -->
+    <string name="title_activity_old_remote_list">Remote List</string>
     <string name="add_remote">Add new remote</string>
 
     <!-- Remote titles -->
@@ -20,6 +20,7 @@
     <string name="remotetitle_sony1">Sony Speakers</string>
 
     <!-- AddRemote Activity -->
+    <string name="title_activity_add_remote">AddRemote</string>
     <string name="nameHint">Remote Name</string>
     <string name="codesHint">Enter Codes&#8230;</string>
 
@@ -30,6 +31,15 @@
     <!-- Code names -->
     <string name="codename_power">Power</string>
     <string name="codename_input">Input</string>
+
+    <!-- AddCodes activity -->
+    <string name="title_activity_add_codes">AddCodes</string>
+
+    <!-- EditCode Activity -->
+    <string name="title_activity_edit_code">EditCode</string>
+
+    <!-- Proper RemoteList Activity -->
+    <string name="title_activity_remote_list">RemoteList</string>
 
 
     <!-- Example Strings related to Settings -->
@@ -103,6 +113,4 @@
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
-    <string name="title_activity_add_remote">AddRemote</string>
-    <string name="title_activity_add_codes">AddCodes</string>
 </resources>

@@ -17,11 +17,11 @@
         android:contentDescription="@string/power"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.265"
+        app:layout_constraintHorizontal_bias="0.269"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.058"
-        app:srcCompat="@drawable/ic_power_settings_new_white_48dp" />
+        app:layout_constraintVertical_bias="0.068"
+        app:srcCompat="@drawable/power" />
 
     <ImageButton
         android:id="@+id/inputButton"
@@ -33,11 +33,11 @@
         android:layout_marginTop="36dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.576"
+        app:layout_constraintHorizontal_bias="0.574"
         app:layout_constraintStart_toEndOf="@+id/pwrButton"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/ic_input_white_48dp" />
+        app:srcCompat="@drawable/input" />
 
     <ImageButton
         android:id="@+id/volDNButton"
@@ -50,7 +50,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.797"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/ic_volume_down_white_48dp" />
+        app:srcCompat="@drawable/voldn" />
 
     <ImageButton
         android:id="@+id/muteButton"
@@ -66,7 +66,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/volDNButton"
         app:layout_constraintVertical_bias="0.156"
-        app:srcCompat="@drawable/ic_volume_off_white_48dp" />
+        app:srcCompat="@drawable/mute" />
 
     <ImageButton
         android:id="@+id/volUPButton"
@@ -82,7 +82,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.961"
-        app:srcCompat="@drawable/ic_volume_up_white_48dp" />
+        app:srcCompat="@drawable/volup" />
 
     <LinearLayout
         android:layout_width="match_parent"

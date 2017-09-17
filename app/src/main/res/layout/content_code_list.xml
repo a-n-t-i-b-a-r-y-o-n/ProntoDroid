@@ -44,7 +44,7 @@
                 android:scaleType="fitCenter"
                 android:scaleX=".4"
                 android:scaleY=".4"
-                app:srcCompat="@drawable/ic_power_settings_new_white_48dp" />
+                app:srcCompat="@drawable/power" />
 
         </TableRow>
 
@@ -74,7 +74,7 @@
                 android:scaleType="fitCenter"
                 android:scaleX=".4"
                 android:scaleY=".4"
-                app:srcCompat="@drawable/ic_input_white_48dp" />
+                app:srcCompat="@drawable/input" />
         </TableRow>
 
         <Space

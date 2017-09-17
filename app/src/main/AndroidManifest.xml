@@ -8,12 +8,12 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/Theme.CurrentAppTheme">
         <activity
             android:name=".Controls"
             android:label="@string/app_name"
             android:screenOrientation="sensorPortrait"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
+            android:theme="@style/Theme.CurrentAppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -24,16 +24,7 @@
             android:name=".Settings"
             android:label="@string/title_activity_settings"
             android:parentActivityName=".Controls"
-            android:theme="@style/AppTheme">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="paronomasia.audioir.Controls" />
-        </activity>
-        <activity
-            android:name=".RemoteList"
-            android:label="@string/title_activity_remote_list"
-            android:parentActivityName=".Controls"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
+            android:theme="@style/Theme.CurrentAppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="paronomasia.audioir.Controls" />
@@ -42,7 +33,7 @@
             android:name=".AddRemote"
             android:label="@string/title_activity_add_remote"
             android:parentActivityName=".Controls"
-            android:theme="@style/AppTheme">
+            android:theme="@style/Theme.CurrentAppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="paronomasia.audioir.Controls" />
@@ -50,17 +41,24 @@
         <activity
             android:name=".AddCodes"
             android:label="@string/title_activity_add_codes"
-            android:theme="@style/AppTheme">
-        </activity>
+            android:theme="@style/Theme.CurrentAppTheme"></activity>
         <activity
             android:name=".CodeList"
             android:label="@string/title_activity_code_list"
             android:parentActivityName=".Controls"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
+            android:theme="@style/Theme.CurrentAppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="paronomasia.audioir.Controls" />
         </activity>
+        <activity
+            android:name=".EditCode"
+            android:label="@string/title_activity_edit_code"
+            android:theme="@style/Theme.CurrentAppTheme"></activity>
+        <activity
+            android:name=".RemoteList"
+            android:label="@string/title_activity_remote_list"
+            android:theme="@style/Theme.CurrentAppTheme"></activity>
     </application>
 
 </manifest>
