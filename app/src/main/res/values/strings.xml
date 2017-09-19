@@ -34,6 +34,10 @@
 
     <!-- AddCodes activity -->
     <string name="title_activity_add_codes">AddCodes</string>
+    <string name="newcode">New Code</string>
+    <string name="name">Name</string>
+    <string name="hexhere">Type or Paste ProntoHex Here</string>
+    <string name="remoteName">Adding code for remote</string>
 
     <!-- EditCode Activity -->
     <string name="title_activity_edit_code">EditCode</string>

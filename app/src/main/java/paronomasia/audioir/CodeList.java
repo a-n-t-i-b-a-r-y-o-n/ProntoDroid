@@ -2,7 +2,10 @@ package paronomasia.audioir;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
@@ -13,13 +16,14 @@ import java.util.ArrayList;
 public class CodeList extends AppCompatActivity {
 
     /*
-    TODO
-        - Implement some type of scrolling list view (RecyclerView? ListView? Nested Scrolling View?)
-        - Make this actually pull from the DB
+        TODO:
+            - This thing doesn't work. Determine why.
      */
 
-    Remote current;
-    RemotesDBHelper rdb = new RemotesDBHelper(CodeList.this);
+    private RecyclerView recycler;
+    private RecyclerView.Adapter rAdapter;
+    private RecyclerView.LayoutManager rLayoutManager;
+    private RemotesDBHelper rdb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,16 +35,21 @@ public class CodeList extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_code_list);
 
+        FloatingActionButton fab = findViewById(R.id.fab);
 
-        TableRow addButton = findViewById(R.id.addCodeTR);
-        addButton.setOnClickListener(v ->{
+        rdb = new RemotesDBHelper(CodeList.this);
 
-            Intent i = new Intent(CodeList.this, AddCodes.class);
+        recycler = findViewById(R.id.CodeListRecycler);
+
+        recycler.setHasFixedSize(true);
+
+        rLayoutManager = new LinearLayoutManager(this);
+        recycler.setLayoutManager(rLayoutManager);
+
+        fab.setOnClickListener(v -> {
+            Intent i = new Intent(this, AddCodes.class);
             startActivity(i);
-
         });
-        ImageButton plusButton = findViewById(R.id.addCodeButton);
-        plusButton.setOnClickListener(v -> addButton.callOnClick());
 
 
     }
@@ -54,16 +63,29 @@ public class CodeList extends AppCompatActivity {
 
         super.onResume();
 
-
+        ArrayList<Code> c = rdb.dumpAllCodes();
+        if(c == null){
+            Log.d("DUMP", "Null list returned");
+        }
+        else if(c.size() == 0){
+            Log.d("DUMP", "Empty list returned");
+        }
+        else if(c.size() > 0) {
+            for (int i = 0; i < c.size(); i++){
+                Log.d("DUMP", "ID: " + c.get(i).getID() + "\nRemote: " +
+                        c.get(i).getRemoteID() + "\nHex: " + c.get(i).getHex());
+            }
+        }
 
         // Get all the codes from our current remote
-        if(!rdb.getAllRemotes().isEmpty()) {
-            ArrayList<Code> codes = rdb.getCodesForRemote(rdb.getCurrentRemote().getID());
+        if(!rdb.getAllRemotes().isEmpty() && !rdb.getCodesForRemote(rdb.getCurrentRemote().getID()).isEmpty()) {
+            rAdapter = new CodeListAdapter(rdb.dumpAllCodes());
+            recycler.setAdapter(rAdapter);
+            Log.d("DB", "Should've made an adapter?");
         }
         else
-            Log.d("DB", "The databse is empty though...");
+            Log.d("DB", "The database is empty though...");
 
-        // Create the table with all of the codes and their symbols
 
     }
 

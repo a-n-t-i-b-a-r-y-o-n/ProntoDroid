@@ -41,7 +41,7 @@
         <activity
             android:name=".AddCodes"
             android:label="@string/title_activity_add_codes"
-            android:theme="@style/Theme.CurrentAppTheme"></activity>
+            android:theme="@style/Theme.CurrentAppTheme" />
         <activity
             android:name=".CodeList"
             android:label="@string/title_activity_code_list"
@@ -54,11 +54,11 @@
         <activity
             android:name=".EditCode"
             android:label="@string/title_activity_edit_code"
-            android:theme="@style/Theme.CurrentAppTheme"></activity>
+            android:theme="@style/Theme.CurrentAppTheme" />
         <activity
             android:name=".RemoteList"
             android:label="@string/title_activity_remote_list"
-            android:theme="@style/Theme.CurrentAppTheme"></activity>
+            android:theme="@style/Theme.CurrentAppTheme" />
     </application>
 
 </manifest>

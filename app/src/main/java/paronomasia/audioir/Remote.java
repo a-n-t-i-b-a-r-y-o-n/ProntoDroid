@@ -46,6 +46,7 @@ class Remote {
     }
 
     // Everything but the id (set here to -1). Used in AddRemote.class methods for adding fresh remotes to DB
+    // The code list can be passed as null FWIW. This is useful when adding only a remote and no codes yet.
     Remote(ArrayList<Code> codes, int vendor, int type, String name, boolean current, String hash){
         this(-1, codes, vendor, type, name, current, hash);
     }

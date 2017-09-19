@@ -41,21 +41,6 @@ public class RemoteListAdapter extends RecyclerView.Adapter<RemoteListAdapter.Vi
         holder.button.setText(rList.get(i).getName());
         holder.button.setChecked(rList.get(i).getCurrent());
 
-        /*
-        // Check only one button, and set all the others' "current" value to 0
-        holder.button.setOnClickListener(v -> {
-            if(!holder.button.isChecked()) {
-                rdb = new RemotesDBHelper(holder.button.getContext()); // will this work? not sure about the context here.
-                rdb.clearCurrent();
-                for(int x = 0; x < rList.size(); x++)
-                    rList.get(x).setCurrent(false);
-                rdb.updateCurrent(rList.get(i).getID());
-                rList.get(i).setCurrent(true);
-                //notifyItemRangeChanged(0, rList.size());
-                notifyDataSetChanged();
-            }
-        });
-        */
     }
 
     @Override
@@ -71,6 +56,8 @@ public class RemoteListAdapter extends RecyclerView.Adapter<RemoteListAdapter.Vi
             button = r;
 
             r.setOnClickListener(v -> {
+
+                // Check only one button, and set all the others' "current" value to 0
                 if(r.isChecked()){
                     rdb = new RemotesDBHelper(r.getContext());
                     rdb.clearCurrent();

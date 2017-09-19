@@ -58,8 +58,11 @@ public class RemoteList extends AppCompatActivity {
             rAdapter = new RemoteListAdapter(rdb.getAllRemotes());
             recycler.setAdapter(rAdapter);
         }
-        else
-            Log.d("DB", "Remotes DB empty...");
+        else {
+            Log.d("DB", "Remotes DB empty. Jumping to AddRemote.class...");
+            Intent i = new Intent(this, AddRemote.class);
+            startActivity(i);
+        }
 
         super.onResume();
     }

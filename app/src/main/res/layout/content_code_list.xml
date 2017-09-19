@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/CodeListRecycler"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="10dp"
@@ -10,106 +11,4 @@
     tools:context="paronomasia.audioir.CodeList"
     tools:showIn="@layout/activity_code_list">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_horizontal"
-            android:layout_weight="1"
-            android:divider="@android:drawable/dialog_holo_light_frame"
-            android:dividerPadding="@dimen/text_margin">
-
-            <TextView
-                android:id="@+id/textView5"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="fill_horizontal|center"
-                android:layout_margin="10dp"
-                android:layout_weight="3"
-                android:text="@string/codename_power"
-                android:textColor="@android:color/white"
-                android:textSize="18sp" />
-
-            <ImageView
-                android:id="@+id/imageView"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="top|center_vertical|center"
-                android:layout_margin="10dp"
-                android:layout_weight="1"
-                android:scaleType="fitCenter"
-                android:scaleX=".4"
-                android:scaleY=".4"
-                app:srcCompat="@drawable/power" />
-
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
-
-            <TextView
-                android:id="@+id/textView6"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="fill_horizontal|center"
-                android:layout_margin="10dp"
-                android:layout_weight="3"
-                android:text="@string/codename_input"
-                android:textColor="@android:color/white"
-                android:textSize="18sp" />
-
-            <ImageView
-                android:id="@+id/imageView2"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="top|center"
-                android:layout_margin="10dp"
-                android:layout_weight="1"
-                android:scaleType="fitCenter"
-                android:scaleX=".4"
-                android:scaleY=".4"
-                app:srcCompat="@drawable/input" />
-        </TableRow>
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            android:layout_weight="1" />
-
-        <TableRow
-            android:id="@+id/addCodeTR"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:divider="@android:color/background_light"
-            android:dividerPadding="@dimen/fab_margin">
-
-            <TextView
-                android:id="@+id/textView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:layout_weight="3"
-                android:text="@string/add_code"
-                android:textAlignment="center"
-                android:textSize="18sp" />
-
-            <ImageButton
-                android:id="@+id/addCodeButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right|center_vertical"
-                android:layout_margin="10dp"
-                android:layout_weight="1"
-                android:background="@android:color/transparent"
-                app:srcCompat="@drawable/ic_add_white_24dp" />
-        </TableRow>
-    </LinearLayout>
-
-</ScrollView>
+</android.support.v7.widget.RecyclerView>

@@ -1,12 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_margin="20dp"
+    android:orientation="vertical"
     android:theme="@style/Base.ThemeOverlay.AppCompat.Dark.ActionBar"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="paronomasia.audioir.AddCodes"
     tools:showIn="@layout/activity_add_codes">
 
-</android.support.constraint.ConstraintLayout>
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30dp"
+        android:text="@string/newcode"
+        android:textAlignment="center"
+        android:textColor="@android:color/white"
+        android:textSize="24sp" />
+
+    <EditText
+        android:id="@+id/addcode_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:background="@android:color/background_light"
+        android:capitalize="words"
+        android:ems="10"
+        android:gravity="center_vertical|center_horizontal"
+        android:hint="Name"
+        android:inputType="text"
+        android:textColor="@android:color/black"
+        android:textColorHint="@android:color/darker_gray" />
+
+    <EditText
+        android:id="@+id/addcode_pronto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:background="@android:color/background_light"
+        android:backgroundTintMode="multiply"
+        android:ems="10"
+        android:gravity="center_vertical|center_horizontal"
+        android:hint="@string/hexhere"
+        android:inputType="textMultiLine"
+        android:lines="8"
+        android:textColor="@android:color/black"
+        android:textColorHint="@android:color/darker_gray" />
+
+    <Spinner
+        android:id="@+id/addcode_typemenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/remoteNameLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>

@@ -54,9 +54,14 @@ public class AddRemote extends AppCompatActivity implements OnItemSelectedListen
 
             if (!remoteNameField.getText().toString().equals("")) {
                 // !!! DB TEST!!!
-                ArrayList<Code> al1 = new ArrayList<>();
-                Code c1 = new Code(-1, -1, codeField.getText().toString(), 0, "");
-                al1.add(c1);
+                ArrayList<Code> al1;
+                if (!codeField.getText().toString().equals("")) {
+                    al1 = new ArrayList<>();
+                    Code c1 = new Code(-1, -1, codeField.getText().toString(), 0, "TestCode");
+                    al1.add(c1);
+                } else {
+                    al1 = null;
+                }
 
 
                 // Remote(ArrayList<Code> codes, int vendor, int type, String name, boolean current, String hash)
@@ -83,14 +88,14 @@ public class AddRemote extends AppCompatActivity implements OnItemSelectedListen
         // Is there a way to do this without hardcoding?
         vendorList.add("Add vendor +");
 
-        ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, vendorList);
+        ArrayAdapter<String> adapter1 = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, vendorList);
         adapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         vendorMenu.setAdapter(adapter1);
 
 
         typeMenu.setOnItemSelectedListener(this);
 
-        ArrayAdapter<Remote.deviceType> adapter2 = new ArrayAdapter<Remote.deviceType>(this, android.R.layout.simple_spinner_item, Remote.deviceType.values());
+        ArrayAdapter<Remote.deviceType> adapter2 = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, Remote.deviceType.values());
         adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         typeMenu.setAdapter(adapter2);
 
@@ -109,7 +114,7 @@ public class AddRemote extends AppCompatActivity implements OnItemSelectedListen
                             "\tNAME: " + list.get(i).getName() +
                             "\tVENDOR: " + rdb.getVendor(list.get(i).getVendorId()) +
                             "\tTYPE: " + list.get(i).getTypeString() +
-                            "\nCODES: " + list.get(i).getCodes().get(0).getHex().toString());
+                            "\nCODES: " + (list.get(i).getCodes() == null ? "NO CODES" : list.get(i).getCodes().get(0).getHex().toString()));
                 }
             } else
                 output.setText("Empty.");
@@ -117,14 +122,12 @@ public class AddRemote extends AppCompatActivity implements OnItemSelectedListen
 
         Button purgeDBButton = findViewById(R.id.purgeDBButton);
         purgeDBButton.setOnClickListener(v -> {
-            //RemotesDBHelper rdbh = new RemotesDBHelper(AddRemote.this);
             rdb.purgeDB();
             TextView output = findViewById(R.id.outputField);
             output.setText("Purged.");
         });
 
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override

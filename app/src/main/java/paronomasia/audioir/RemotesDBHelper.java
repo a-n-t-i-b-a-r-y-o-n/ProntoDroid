@@ -20,7 +20,8 @@ public class RemotesDBHelper extends SQLiteOpenHelper {
     /*
     TODO
         - Finish implementing the DB handler
-        - Implement using hashes to determine if a remote has changed (i.e. to trigger updating the current in Controls.java)
+        - Implement using hashes to determine if a remote has changed
+            (i.e. to trigger updating the current in Controls.java when needed rather than doing it every time)
      */
 
     // Extensive help from here: github.com/codepath/android_guides/wiki/Local-Databases-with-SQLiteOpenHelper
@@ -153,7 +154,7 @@ public class RemotesDBHelper extends SQLiteOpenHelper {
                 cursor.close();
             db.close();
         }
-        return remotes;
+        return (remotes.size() == 0) ? null : remotes;
     }
 
     // returns true if it worked, false if nah
@@ -190,9 +191,11 @@ public class RemotesDBHelper extends SQLiteOpenHelper {
         }
 
         // Add all codes
-        for(Code c : remote.getCodes() ){
-            if(!addCode(remoteID, c))
-                Log.d("DB", "Problem adding code(s).");
+        if (remote.getCodes() != null) {
+            for(Code c : remote.getCodes() ){
+                if(!addCode(remoteID, c))
+                    Log.d("DB", "Problem adding code(s).");
+            }
         }
 
         return true;
@@ -204,9 +207,6 @@ public class RemotesDBHelper extends SQLiteOpenHelper {
         db.beginTransaction();
         try {
             ContentValues cinfo = new ContentValues();
-            //Setting the id to -1 means it's a new code that hasn't been added to the db.
-            if(code.getID() != -1)
-                cinfo.put(KEY_CODE_ID, code.getID());
             cinfo.put(KEY_CODE, code.getHex());
             cinfo.put(KEY_CODE_REMOTE_ID_FK, remoteID); // This gets passed the proper value... right?
             cinfo.put(KEY_CODE_BUTTON, code.getType());
@@ -228,9 +228,11 @@ public class RemotesDBHelper extends SQLiteOpenHelper {
     protected boolean updateCode(Code code){
         SQLiteDatabase db = getWritableDatabase();
 
-        db.beginTransaction();
         try {
             ContentValues cinfo = new ContentValues();
+            //Setting the id to -1 means it's a new code that hasn't been added to the db.
+            if(code.getID() != -1)
+                cinfo.put(KEY_CODE_ID, code.getID());
             cinfo.put(KEY_CODE, code.getHex());
             cinfo.put(KEY_CODE_BUTTON, code.getType());
             cinfo.put(KEY_CODE_BUTTON_NAME, code.getName());
@@ -242,8 +244,6 @@ public class RemotesDBHelper extends SQLiteOpenHelper {
             Log.d("DB", "Error updating code id " + code.getID());
             e.printStackTrace();
             return false;
-        } finally {
-            db.setTransactionSuccessful();
         }
 
         return true;
@@ -481,6 +481,28 @@ public class RemotesDBHelper extends SQLiteOpenHelper {
         }
 
         return -1;
+    }
+
+    protected ArrayList<Code> dumpAllCodes(){
+        SQLiteDatabase db = getReadableDatabase();
+        ArrayList<Code> codes = new ArrayList<>();
+        final String DUMP_CODES = "Select * from " + TABLE_CODES;
+        Cursor cursor = db.rawQuery(DUMP_CODES, null);
+        try {
+            if(cursor.moveToFirst()){
+                codes.add(new Code(cursor.getInt(cursor.getColumnIndex(KEY_CODE_ID)),
+                        cursor.getInt(cursor.getColumnIndex(KEY_CODE_REMOTE_ID_FK)),
+                        cursor.getString(cursor.getColumnIndex(KEY_CODE)),
+                        cursor.getInt(cursor.getColumnIndex(KEY_CODE_BUTTON)),
+                        cursor.getString(cursor.getColumnIndex(KEY_CODE_BUTTON_NAME))));
+            }
+        } catch (Exception e){
+            Log.d("DB", "Error dumping all codes");
+        } finally {
+            if (cursor != null && !cursor.isClosed())
+                cursor.close();
+        }
+        return (codes.size() != 0) ? codes : null;
     }
 
     protected void purgeDB(){
