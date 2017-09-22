@@ -119,7 +119,6 @@ public class RemotesDBHelper extends SQLiteOpenHelper {
         // Query the database ?
         ArrayList<Remote> remotes = new ArrayList<>();
 
-        // SELECT * FROM REMOTES
 
         final String BASIC_SELECT_QUERY = String.format("SELECT * FROM %s", TABLE_REMOTES);
         SQLiteDatabase db = getReadableDatabase();
@@ -483,18 +482,26 @@ public class RemotesDBHelper extends SQLiteOpenHelper {
         return -1;
     }
 
+
+
+
+
+    // DEBUG & TESTING METHODS
+
     protected ArrayList<Code> dumpAllCodes(){
         SQLiteDatabase db = getReadableDatabase();
         ArrayList<Code> codes = new ArrayList<>();
-        final String DUMP_CODES = "Select * from " + TABLE_CODES;
+        final String DUMP_CODES = "Select * FROM " + TABLE_CODES;
         Cursor cursor = db.rawQuery(DUMP_CODES, null);
         try {
             if(cursor.moveToFirst()){
-                codes.add(new Code(cursor.getInt(cursor.getColumnIndex(KEY_CODE_ID)),
-                        cursor.getInt(cursor.getColumnIndex(KEY_CODE_REMOTE_ID_FK)),
-                        cursor.getString(cursor.getColumnIndex(KEY_CODE)),
-                        cursor.getInt(cursor.getColumnIndex(KEY_CODE_BUTTON)),
-                        cursor.getString(cursor.getColumnIndex(KEY_CODE_BUTTON_NAME))));
+                do {
+                    codes.add(new Code(cursor.getInt(cursor.getColumnIndex(KEY_CODE_ID)),
+                            cursor.getInt(cursor.getColumnIndex(KEY_CODE_REMOTE_ID_FK)),
+                            cursor.getString(cursor.getColumnIndex(KEY_CODE)),
+                            cursor.getInt(cursor.getColumnIndex(KEY_CODE_BUTTON)),
+                            cursor.getString(cursor.getColumnIndex(KEY_CODE_BUTTON_NAME))));
+                } while (cursor.moveToNext());
             }
         } catch (Exception e){
             Log.d("DB", "Error dumping all codes");

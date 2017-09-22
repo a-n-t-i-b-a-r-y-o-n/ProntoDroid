@@ -8,22 +8,15 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageButton;
-import android.widget.TableRow;
-
-import java.util.ArrayList;
 
 public class CodeList extends AppCompatActivity {
-
-    /*
-        TODO:
-            - This thing doesn't work. Determine why.
-     */
 
     private RecyclerView recycler;
     private RecyclerView.Adapter rAdapter;
     private RecyclerView.LayoutManager rLayoutManager;
     private RemotesDBHelper rdb;
+
+    private FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +28,7 @@ public class CodeList extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_code_list);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
+         fab = findViewById(R.id.codelist_fab);
 
         rdb = new RemotesDBHelper(CodeList.this);
 
@@ -63,29 +56,16 @@ public class CodeList extends AppCompatActivity {
 
         super.onResume();
 
-        ArrayList<Code> c = rdb.dumpAllCodes();
-        if(c == null){
-            Log.d("DUMP", "Null list returned");
+        // Get all the codes from our current remote if that's a thing.
+        if((rdb.getAllRemotes() == null || rdb.getCurrentRemote() == null || rdb.getCodesForRemote(rdb.getCurrentRemote().getID()) == null) || (rdb.getAllRemotes().isEmpty() || rdb.getCodesForRemote(rdb.getCurrentRemote().getID()).isEmpty())) {
+            Log.d("DB", "This remote has no codes. Jumping to AddCodes.class...");
+            Intent i = new Intent(this, AddCodes.class);
+            startActivity(i);
         }
-        else if(c.size() == 0){
-            Log.d("DUMP", "Empty list returned");
-        }
-        else if(c.size() > 0) {
-            for (int i = 0; i < c.size(); i++){
-                Log.d("DUMP", "ID: " + c.get(i).getID() + "\nRemote: " +
-                        c.get(i).getRemoteID() + "\nHex: " + c.get(i).getHex());
-            }
-        }
-
-        // Get all the codes from our current remote
-        if(!rdb.getAllRemotes().isEmpty() && !rdb.getCodesForRemote(rdb.getCurrentRemote().getID()).isEmpty()) {
-            rAdapter = new CodeListAdapter(rdb.dumpAllCodes());
+        else {
+            rAdapter = new CodeListAdapter(rdb.getCodesForRemote(rdb.getCurrentRemote().getID()));
             recycler.setAdapter(rAdapter);
-            Log.d("DB", "Should've made an adapter?");
         }
-        else
-            Log.d("DB", "The database is empty though...");
-
 
     }
 

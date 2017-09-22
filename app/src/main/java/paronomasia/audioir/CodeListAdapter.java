@@ -1,21 +1,18 @@
 package paronomasia.audioir;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
+import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
 import android.widget.TextView;
-
 import java.util.ArrayList;
-
-import butterknife.BindDrawable;
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * Braden 9/17/17.
@@ -36,9 +33,7 @@ public class CodeListAdapter extends RecyclerView.Adapter<CodeListAdapter.ViewHo
         // Create a view
         LinearLayout l = (LinearLayout) LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.codelist_row, parent, false);
-        // Set the attributes here:
-
-        Log.d("DB", "onCreateViewHolder()");
+        // Set any layout attributes here.
 
         return new ViewHolder(l);
     }
@@ -50,20 +45,10 @@ public class CodeListAdapter extends RecyclerView.Adapter<CodeListAdapter.ViewHo
         // replace the contents of the view with that element.
         holder.label.setText(cList.get(i).getName());
         holder.label.setTextColor(Color.WHITE);
-        Log.d("DB", "onBindViewHolder()");
-        /*
 
-        // This doesn't work yet. Look up how to use @BindDrawable in the Code.java file instead! (potentially as part of the enum)
-
-        if(cList.get(i).getType() != Code.buttonType.OTHER.ordinal()){
-            @BindDrawable(R.drawable.power)
-            Drawable power;
-            holder.image.setImageDrawable(power);
-        }
-        else {
-
-        }
-        */
+        // if there's a drawable associated with the given button
+        // (*should* be blank if there's not ) then set it in the imageview
+        holder.image.setImageDrawable(ContextCompat.getDrawable(holder.context, cList.get(i).getDrawableID()));
 
     }
 
@@ -73,25 +58,29 @@ public class CodeListAdapter extends RecyclerView.Adapter<CodeListAdapter.ViewHo
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
+        public Context context;
         public LinearLayout layout;
-        public @BindView(R.id.codelist_codename) TextView label;
-        public @BindView(R.id.codelist_buttonimage) ImageView image;
+        public TextView label;
+        public ImageView image;
+
 
 
         public ViewHolder(LinearLayout l) {
             super(l);
+            context = l.getContext();
             layout = l;
-            ButterKnife.bind(this, l);
             label = (TextView) l.getChildAt(0);
-            /*
+            image = (ImageView) l.getChildAt(1);
+
+
             l.setOnClickListener(v -> {
 
                 //Current selection:
-                // cList.get(getAdapterPosition())
+                Intent i = new Intent(l.getContext(), EditCode.class);
+                i.putExtra("id", cList.get(getAdapterPosition()).getID());
+                ContextCompat.startActivity(context, i, null);
 
             });
-            */
-            Log.d("DB", "ViewHolder(LinearLayout l)");
 
         }
     }

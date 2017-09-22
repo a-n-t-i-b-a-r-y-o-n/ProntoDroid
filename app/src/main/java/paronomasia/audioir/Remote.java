@@ -117,10 +117,13 @@ class Remote {
 
     // return all codes for a given remote
     public ArrayList<Code> getCodes(){
-        return this.codes;
+        if( this.codes == null || this.codes.size() == 0)
+            return null;
+        else
+            return this.codes;
     }
 
-    // add an ArrayList<> of codes
+    // add an ArrayList<> of codes to this remote
     public void setCodes(ArrayList<Code> codes){
         this.codes = codes;
     }
@@ -131,6 +134,7 @@ class Remote {
         this.codes.add(code);
     }
 
+    // sets the current bit for this remote
     public void setCurrent(boolean status){
         this.current = status;
     }

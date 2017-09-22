@@ -8,36 +8,11 @@
     android:theme="@android:style/ThemeOverlay.Material.Dark"
     tools:context="paronomasia.audioir.Controls">
 
-    <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
-
-
-        android:layout_height="wrap_content"
-        android:background="@android:color/black"
-        android:theme="@style/AppTheme.AppBarOverlay"
-        android:visibility="gone">
-
-        <!-- Changed this to forcibly hide the action bar
-        I just don't fucking get Android Studio sometimes.
-        All this appcompat bullshit seems really contrived.
-        android:layout_height="wrap_content"
-        -->
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@android:color/black"
-            android:visibility="gone"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
-
-    </android.support.design.widget.AppBarLayout>
-
     <include layout="@layout/content_controls" />
     <include layout="@layout/fab_layout" />
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
+        android:id="@+id/controls_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"

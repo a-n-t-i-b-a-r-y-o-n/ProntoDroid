@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/codelist_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
@@ -13,6 +14,7 @@
         android:layout_gravity="fill_horizontal|center"
         android:layout_margin="10dp"
         android:layout_weight="3"
+        android:paddingLeft="10dp"
         android:text="test"
         android:textColor="@android:color/white"
         android:textSize="18sp"
@@ -22,7 +24,7 @@
         android:id="@+id/codelist_buttonimage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight=".5"
         android:scaleX=".4"
         android:scaleY=".4"
         app:srcCompat="@drawable/ic_add_white_48dp" />

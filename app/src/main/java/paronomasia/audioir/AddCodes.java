@@ -1,11 +1,12 @@
 package paronomasia.audioir;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -17,6 +18,10 @@ import android.widget.Toast;
 public class AddCodes extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     private RemotesDBHelper rdb;
+    private FloatingActionButton fab;
+    private EditText codehex;
+    private EditText codename;
+    private Spinner codetype;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,13 +34,13 @@ public class AddCodes extends AppCompatActivity implements AdapterView.OnItemSel
         setContentView(R.layout.activity_add_codes);
 
 
+        fab = findViewById(R.id.addcode_fab);
+        codehex = findViewById(R.id.addcode_pronto);
+        codename = findViewById(R.id.addcode_name);
+        codetype = findViewById(R.id.addcode_typemenu);
+
+
         rdb = new RemotesDBHelper(AddCodes.this);
-
-
-        FloatingActionButton fab = findViewById(R.id.fab);
-        EditText codehex = findViewById(R.id.addcode_pronto);
-        EditText codename = findViewById(R.id.addcode_name);
-        Spinner codetype = findViewById(R.id.addcode_typemenu);
 
         codetype.setOnItemSelectedListener(this);
         ArrayAdapter<Code.buttonType> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, Code.buttonType.values());
@@ -43,14 +48,15 @@ public class AddCodes extends AppCompatActivity implements AdapterView.OnItemSel
         codetype.setAdapter(adapter);
 
 
-        fab.setOnClickListener(v -> {
-            if(!codehex.getText().toString().equals("") && !codename.getText().toString().equals("")) {
-                rdb.addCode(rdb.getCurrentRemote().getID(), new Code(-1, rdb.getCurrentRemote().getID(), codehex.getText().toString(), codetype.getSelectedItemPosition(), codename.getText().toString()));
-                finish();
+        codename.setOnFocusChangeListener((v, b) -> {
+            if(!b){
+                for(Code.buttonType t : Code.buttonType.values()) {
+                    if ((codename.getText().toString().equalsIgnoreCase(t.toString()) || codename.getText().toString().toUpperCase().contains(t.toString()))
+                            && !codename.getText().toString().equalsIgnoreCase("other")) {
+                        codetype.setSelection(t.getNum());
+                    }
+                }
             }
-            else
-                Toast.makeText(this, "Please make sure all fields are filled.", Toast.LENGTH_SHORT)
-                        .show();
         });
 
 
@@ -67,15 +73,16 @@ public class AddCodes extends AppCompatActivity implements AdapterView.OnItemSel
         TextView remoteNameLabel = findViewById(R.id.remoteNameLabel);
         remoteNameLabel.setText(String.format("%s: %s", R.string.remoteName, rdb.getCurrentRemote().getName()));
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        EditText codehex = findViewById(R.id.addcode_pronto);
-        EditText codename = findViewById(R.id.addcode_name);
-        Spinner codetype = findViewById(R.id.addcode_typemenu);
+
+
+        rdb = new RemotesDBHelper(AddCodes.this);
 
 
         fab.setOnClickListener(v -> {
+            Log.d("DB", "Attempting to add code to remote " + rdb.getCurrentRemote().getID());
             if(!codehex.getText().toString().equals("") && !codename.getText().toString().equals("")) {
-                rdb.addCode(rdb.getCurrentRemote().getID(), new Code(-1, rdb.getCurrentRemote().getID(), codehex.getText().toString(), codetype.getSelectedItemPosition(), codename.getText().toString()));
+                Log.d("DB", "Returned: " + rdb.addCode(rdb.getCurrentRemote().getID(), new Code(-1, rdb.getCurrentRemote().getID(), codehex.getText().toString(), ((Code.buttonType) codetype.getSelectedItem()).getNum(), codename.getText().toString())));
+
                 finish();
             }
             else
@@ -100,5 +107,13 @@ public class AddCodes extends AppCompatActivity implements AdapterView.OnItemSel
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
 
+    }
+
+
+    // This fixes a navigation glitch if you decide not to add the first code.
+    @Override
+    public void onBackPressed(){
+        super.onBackPressed();
+        navigateUpTo(new Intent(AddCodes.this, Controls.class));
     }
 }

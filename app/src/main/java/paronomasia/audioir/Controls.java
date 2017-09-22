@@ -23,14 +23,18 @@ public class Controls extends AppCompatActivity {
     /*
     TODO
         - Make the buttons (re)arrangeable
-        - Link between each botton and its Code.buttonType (for drawables and codes)
+        - Link between each button and its Code.buttonType (for drawables and codes)
         - Implement the settings MiniFAB
      */
 
-    static final int OPEN_LIST_REQUEST = 1;
     public boolean fabMenu = false;
     RemotesDBHelper rdb;
     Remote current;
+
+    private FloatingActionButton fab;
+    private FloatingActionButton minifab_add;
+    private FloatingActionButton minifab_settings;
+    private FloatingActionButton minifab_list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,14 +45,14 @@ public class Controls extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_controls);
 
+        fab = findViewById(R.id.controls_fab);
+        minifab_add = findViewById(R.id.minifab_add);
+        minifab_settings = findViewById(R.id.minifab_settings);
+        minifab_list = findViewById(R.id.minifab_list);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
         fab.setImageResource(R.drawable.remote_icon_48dp);
-        FloatingActionButton minifab_add = findViewById(R.id.minifab_add);
-        FloatingActionButton minifab_settings = findViewById(R.id.minifab_settings);
-        FloatingActionButton minifab_list = findViewById(R.id.minifab_list);
 
-
+        // These will be created dynamically soon enough...
         ImageButton pwrButton = findViewById(R.id.pwrButton);
         ImageButton inputButton = findViewById(R.id.inputButton);
         ImageButton volUPButton = findViewById(R.id.volUPButton);
@@ -57,12 +61,7 @@ public class Controls extends AppCompatActivity {
         ImageButton testProntoButton = findViewById(R.id.testProntoButton);
 
 
-
-
-
-        // Purge DB on startup for now
         this.rdb = new RemotesDBHelper(Controls.this);
-        rdb.purgeDB();
 
 
 
@@ -93,6 +92,10 @@ public class Controls extends AppCompatActivity {
 
         minifab_settings.setOnClickListener(v -> {
             closeFabMenu();
+
+            // ~ THIS BUTTON PURGES THE DB AS OF RIGHT NOW ~
+            rdb.purgeDB();
+
             Intent i = new Intent(Controls.this, Settings.class);
             startActivity(i);
         });
@@ -106,8 +109,14 @@ public class Controls extends AppCompatActivity {
 
         minifab_add.setOnClickListener(v -> {
             closeFabMenu();
-            Intent i = new Intent(Controls.this, CodeList.class);
-            startActivity(i);
+            if(this.current == null){
+                Toast.makeText(this, "Please add a remote first.", Toast.LENGTH_SHORT)
+                        .show();
+            }
+            else {
+                Intent i = new Intent(Controls.this, CodeList.class);
+                startActivity(i);
+            }
         });
 
 
@@ -136,7 +145,7 @@ public class Controls extends AppCompatActivity {
 
         this.current = rdb.getCurrentRemote();
         if(this.current != null){
-            currentText.setText(current.getName());
+            currentText.setText(this.current.getName());
         }
         else {
             currentText.setText(R.string.nullRemote);
@@ -169,10 +178,6 @@ public class Controls extends AppCompatActivity {
     private void openFabMenu(){
         if (!fabMenu) {
             fabMenu = true;
-            FloatingActionButton fab = findViewById(R.id.fab);
-            FloatingActionButton minifab_add = findViewById(R.id.minifab_add);
-            FloatingActionButton minifab_settings = findViewById(R.id.minifab_settings);
-            FloatingActionButton minifab_list = findViewById(R.id.minifab_list);
 
             // Add new margins to the layout params
             FrameLayout.LayoutParams layoutParams1 = (FrameLayout.LayoutParams) minifab_add.getLayoutParams();
@@ -203,6 +208,12 @@ public class Controls extends AppCompatActivity {
 
             // Change main FAB icon to edit button
             fab.setImageResource(R.drawable.ic_create_white_48dp);
+
+            // Grey out the codes button if we haven't added anything yet.
+            if(this.current == null)
+                minifab_add.setAlpha((float) 0.5);
+            else
+                minifab_add.setAlpha((float) 1.0);
         }
 
     }
@@ -211,10 +222,6 @@ public class Controls extends AppCompatActivity {
 
         if (fabMenu) {
             fabMenu = false;
-            FloatingActionButton fab = findViewById(R.id.fab);
-            FloatingActionButton minifab_add = findViewById(R.id.minifab_add);
-            FloatingActionButton minifab_settings = findViewById(R.id.minifab_settings);
-            FloatingActionButton minifab_list = findViewById(R.id.minifab_list);
 
             // Do the opposite
             FrameLayout.LayoutParams layoutParams1 = (FrameLayout.LayoutParams) minifab_add.getLayoutParams();
@@ -254,15 +261,12 @@ public class Controls extends AppCompatActivity {
         // NOTE that it does so by using the locations of the one on top and the one furthest to the left.
         // ...this is open source, so if you have a better idea then by all means implement it...
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        FloatingActionButton fabL = findViewById(R.id.minifab_add); // minifab furthest to left
-        FloatingActionButton fabT = findViewById(R.id.minifab_list);   // minifab furthest up
-        int[] fabLoc = new int[2];
+        int[] fabLoc = new int[2];  // main fab (i.e. one furthest to the right/bottom)
         fab.getLocationOnScreen(fabLoc);
-        int[] fabLLoc = new int[2];
-        fabL.getLocationOnScreen(fabLLoc);
-        int[] fabTLoc = new int[2];
-        fabT.getLocationOnScreen(fabTLoc);
+        int[] fabLLoc = new int[2]; // minifab furthest to left
+        minifab_add.getLocationOnScreen(fabLLoc);
+        int[] fabTLoc = new int[2]; // minifab furthest up
+        minifab_list.getLocationOnScreen(fabTLoc);
         float x = e.getRawX();
         float y = e.getRawY();
         if ((x < fabLLoc[0] || x > fabLoc[0] + fab.getWidth()) || (y < fabTLoc[1] || y > fabLoc[1] + fab.getHeight())) {
