@@ -1,20 +1,14 @@
 package paronomasia.audioir;
 
 import android.util.Log;
-
-import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * Braden - 9/1/17.
  */
 
 class Remote {
-
-    /*
-    TODO
-	- Complete the enums lists.
-     */
 
 
     // The following enums are referenced with an integer in the database corresponding
@@ -32,10 +26,10 @@ class Remote {
     private deviceType type;      // The type of device the remote is for. Uses above enums.
     private String name;
     private boolean current;    // Is this the current remote?
-    private String hash;
+    private int hash;
 
-    // Complete constructor, used with a known ID value (e.g. when pulling from the database)
-    Remote(int id, ArrayList<Code> codes, int vendor, int type, String name, boolean current, String hash) {
+    // Complete constructor, used with a known ID value and hash (e.g. when pulling from the database)
+    Remote(long id, ArrayList<Code> codes, int vendor, int type, String name, boolean current, int hash) {
         this.remoteID = id;
         this.codes = codes;
         this.vendor = vendor;
@@ -45,46 +39,28 @@ class Remote {
         this.hash = hash;
     }
 
-    // Everything but the id (set here to -1). Used in AddRemote.class methods for adding fresh remotes to DB
-    // The code list can be passed as null FWIW. This is useful when adding only a remote and no codes yet.
-    Remote(ArrayList<Code> codes, int vendor, int type, String name, boolean current, String hash){
-        this(-1, codes, vendor, type, name, current, hash);
+    // Just the vendor, type, name, and current bool.
+    // Used in AddRemote.class methods for adding fresh remotes to DB
+    // The code list is set to an empty list. This is useful when adding only a remote and no codes yet.
+    // The id is left as -1 and the hash is calculated here.
+    Remote(int vendor, int type, String name, boolean current){
+        this.codes = new ArrayList<>();
+        this.vendor = vendor;
+        setType(type);
+        this.name = name;
+        this.current = current;
+        this.hashCode();
     }
 
-    // set the remote ID
-    public void setID(long id){
-        // Used by the DB Helper
-        this.remoteID = id;
-    }
 
     // return the remote ID
     public long getID(){
         return this.remoteID;
     }
 
-    // set the vendor ID int
-    public void setVendor(int vendor){
-        this.vendor = vendor;
-    }
-
     //return the vendor ID int
     public int getVendorId() {
         return this.vendor;
-    }
-
-    // set the type using a string
-    public void setType(String type){
-        for(Remote.deviceType t : Remote.deviceType.values()) {
-            if(t.toString().equals(type))
-                this.type = t;
-        }
-
-        // WARNING this will fail silently.
-    }
-
-    // set the type using a Remote.deviceType
-    public void setType(deviceType type) {
-        this.type = type;
     }
 
     // set the type by the ordinal
@@ -99,10 +75,6 @@ class Remote {
     // return int of device type ordinal
     public int getType() {
         return this.type.ordinal();
-    }
-
-    public String getTypeString() {
-        return this.type.toString();
     }
 
     // set the remote name
@@ -123,6 +95,76 @@ class Remote {
             return this.codes;
     }
 
+    // sets the current bit for this remote
+    public void setCurrent(boolean status){
+        this.current = status;
+    }
+
+    // Is this the current remote?
+    public boolean getCurrent(){
+        return this.current;
+    }
+
+    // compare the hash of the current remote to a given hash string
+    public boolean compareHash(int h2){
+        return this.hash == h2;
+    }
+
+    @Override
+    public int hashCode(){
+        int codesHash = 0;
+        for(int i = 0; i < this.codes.size(); i++){
+            codesHash += Objects.hash(this.codes.get(i).getHex(),
+                    this.codes.get(i).getName(),
+                    this.codes.get(i).getType());
+        }
+        int mainHash = Objects.hash(this.name, this.vendor, this.type, codesHash);
+        this.hash = mainHash + codesHash;
+        return this.hash;
+    }
+
+
+
+    // ~ CURRENTLY UNUSED ACCESSORS / MUTATORS ~
+    /*
+      These are here for completeness, though
+      their functionality is usually already
+      included in the constructors when used
+      by the db helper, activities, etc. or
+      by an overloaded version requiring less
+      memory resources.
+    */
+
+    // set the remote ID
+    public void setID(long id){
+        // Used by the DB Helper
+        this.remoteID = id;
+    }
+
+    // set the vendor ID int
+    public void setVendor(int vendor){
+        this.vendor = vendor;
+    }
+
+    // set the type using a string
+    public void setType(String type){
+        for(Remote.deviceType t : Remote.deviceType.values()) {
+            if(t.toString().equals(type))
+                this.type = t;
+        }
+
+        // WARNING this will fail silently.
+    }
+
+    // set the type using a Remote.deviceType
+    public void setType(deviceType type) {
+        this.type = type;
+    }
+
+    public String getTypeString() {
+        return this.type.toString();
+    }
+
     // add an ArrayList<> of codes to this remote
     public void setCodes(ArrayList<Code> codes){
         this.codes = codes;
@@ -134,24 +176,10 @@ class Remote {
         this.codes.add(code);
     }
 
-    // sets the current bit for this remote
-    public void setCurrent(boolean status){
-        this.current = status;
-    }
-
-    // Is this the current remote?
-    public boolean getCurrent(){
-        return this.current;
-    }
-
-    // ~ UNUSED YET ~ this should probably also be called *from the db handler* to set a has for a given remote + its codes
-    public void setHash(String hash) {
+    // set hash for a remote (called from the db)
+    public void setHash(int hash) {
         this.hash = hash;
     }
 
-    // ~ UNUSED YET ~ return hash of remote values + all codes
-    public String getHash(){
-        return this.hash;
-    }
 
 }

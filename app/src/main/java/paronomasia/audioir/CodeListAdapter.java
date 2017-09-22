@@ -3,7 +3,6 @@ package paronomasia.audioir;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -75,7 +74,6 @@ public class CodeListAdapter extends RecyclerView.Adapter<CodeListAdapter.ViewHo
 
             l.setOnClickListener(v -> {
 
-                //Current selection:
                 Intent i = new Intent(l.getContext(), EditCode.class);
                 i.putExtra("id", cList.get(getAdapterPosition()).getID());
                 ContextCompat.startActivity(context, i, null);

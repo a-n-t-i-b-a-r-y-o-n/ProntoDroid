@@ -58,7 +58,6 @@ public class CodeList extends AppCompatActivity {
 
         // Get all the codes from our current remote if that's a thing.
         if((rdb.getAllRemotes() == null || rdb.getCurrentRemote() == null || rdb.getCodesForRemote(rdb.getCurrentRemote().getID()) == null) || (rdb.getAllRemotes().isEmpty() || rdb.getCodesForRemote(rdb.getCurrentRemote().getID()).isEmpty())) {
-            Log.d("DB", "This remote has no codes. Jumping to AddCodes.class...");
             Intent i = new Intent(this, AddCodes.class);
             startActivity(i);
         }

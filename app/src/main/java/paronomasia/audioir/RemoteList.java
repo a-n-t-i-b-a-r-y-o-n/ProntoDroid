@@ -9,9 +9,6 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 
-        /* TODO:
-            - Prompt the user to add a remote if the database is empty
-         */
 
 public class RemoteList extends AppCompatActivity {
 
@@ -59,7 +56,6 @@ public class RemoteList extends AppCompatActivity {
             recycler.setAdapter(rAdapter);
         }
         else {
-            Log.d("DB", "Remotes DB empty. Jumping to AddRemote.class...");
             Intent i = new Intent(this, AddRemote.class);
             startActivity(i);
         }

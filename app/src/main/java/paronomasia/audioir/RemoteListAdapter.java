@@ -63,7 +63,6 @@ public class RemoteListAdapter extends RecyclerView.Adapter<RemoteListAdapter.Vi
                     rdb.clearCurrent();
                     for(int x = 0; x < rList.size(); x++)
                         rList.get(x).setCurrent(false);
-                    Log.d("DB", "about to update the current remote to: " + rList.get(getAdapterPosition()).getID());
                     rdb.updateCurrent(rList.get(getAdapterPosition()).getID());
                     rList.get(getAdapterPosition()).setCurrent(true);
                     notifyDataSetChanged();

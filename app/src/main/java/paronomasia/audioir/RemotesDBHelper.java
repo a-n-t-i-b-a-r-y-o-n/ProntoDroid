@@ -6,10 +6,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-
-import java.sql.SQLData;
 import java.util.ArrayList;
-import java.util.List;
+
 
 /**
  * Braden - 8/31/17.
@@ -80,7 +78,7 @@ public class RemotesDBHelper extends SQLiteOpenHelper {
                     KEY_REMOTE_TYPE + " INTEGER, " +
                     KEY_REMOTE_VENDOR + " INTEGER, " +
                     KEY_CURRENT + " INTEGER, " +
-                    KEY_REMOTE_HASH + " TEXT " +
+                    KEY_REMOTE_HASH + " INTEGER " +
                 ")";
 
         String CREATE_CODES_TABLE = "CREATE TABLE " + TABLE_CODES +
@@ -129,23 +127,23 @@ public class RemotesDBHelper extends SQLiteOpenHelper {
                 do {
 
                     // MONSTER of a query/constructor. Syntax:
-                    // Remote(int id, ArrayList<Code> codes, int vendor, int type, String name, boolean current, String hash)
+                    // Remote(long id, ArrayList<Code> codes, int vendor, int type, String name, boolean current, int hash)
 
-                    Remote remote = new Remote(cursor.getInt(cursor.getColumnIndex(KEY_REMOTE_ID)),
-                            getCodesForRemote(cursor.getInt(cursor.getColumnIndex(KEY_REMOTE_ID))),
+                    Remote remote = new Remote(cursor.getLong(cursor.getColumnIndex(KEY_REMOTE_ID)),
+                            getCodesForRemote(cursor.getLong(cursor.getColumnIndex(KEY_REMOTE_ID))),
                             cursor.getInt(cursor.getColumnIndex(KEY_REMOTE_VENDOR)),
                             cursor.getInt(cursor.getColumnIndex(KEY_REMOTE_TYPE)),
                             cursor.getString(cursor.getColumnIndex(KEY_REMOTE_NAME)),
                             (cursor.getInt(cursor.getColumnIndex(KEY_CURRENT)) == 1),
-                            cursor.getString(cursor.getColumnIndex(KEY_REMOTE_HASH)));
+                            cursor.getInt(cursor.getColumnIndex(KEY_REMOTE_HASH)));
 
                     remotes.add(remote);
 
                 } while(cursor.moveToNext());
             }
         } catch (Exception e) {
-            Log.d("DB", "Error retrieving remote from db.");
-            Log.d("e", e.getMessage());
+            Log.d("AUDIOIR", "Error retrieving remote from db.");
+            Log.d("AUDIOIR", e.getMessage());
             e.printStackTrace();
             return remotes;
         } finally {
@@ -176,13 +174,13 @@ public class RemotesDBHelper extends SQLiteOpenHelper {
             rinfo.put(KEY_REMOTE_TYPE, remote.getType());
             rinfo.put(KEY_REMOTE_VENDOR, remote.getVendorId());
             rinfo.put(KEY_CURRENT, remote.getCurrent() ? 1 : 0);
-            rinfo.put(KEY_REMOTE_HASH, remote.getHash());
+            rinfo.put(KEY_REMOTE_HASH, remote.hashCode());
             remoteID = db.insertOrThrow(TABLE_REMOTES, null, rinfo);
             db.setTransactionSuccessful();
 
         } catch (Exception e){
-            Log.d("DB", "Error adding remote to db.");
-            Log.d("e", e.getMessage());
+            Log.d("AUDIOIR", "Error adding remote to db.");
+            Log.d("AUDIOIR", e.getMessage());
             e.printStackTrace();
             return false;
         } finally {
@@ -193,7 +191,7 @@ public class RemotesDBHelper extends SQLiteOpenHelper {
         if (remote.getCodes() != null) {
             for(Code c : remote.getCodes() ){
                 if(!addCode(remoteID, c))
-                    Log.d("DB", "Problem adding code(s).");
+                    Log.d("AUDIOIR", "Problem adding code(s).");
             }
         }
 
@@ -214,8 +212,8 @@ public class RemotesDBHelper extends SQLiteOpenHelper {
             db.insertOrThrow(TABLE_CODES, null, cinfo);
             db.setTransactionSuccessful();
         } catch (Exception e) {
-            Log.d("DB", "Error adding code(s) to db.");
-            Log.d("e", e.getMessage());
+            Log.d("AUDIOIR", "Error adding code(s) to db.");
+            Log.d("AUDIOIR", e.getMessage());
             e.printStackTrace();
             return false;
         } finally {
@@ -230,49 +228,25 @@ public class RemotesDBHelper extends SQLiteOpenHelper {
         try {
             ContentValues cinfo = new ContentValues();
             //Setting the id to -1 means it's a new code that hasn't been added to the db.
+            /*
             if(code.getID() != -1)
                 cinfo.put(KEY_CODE_ID, code.getID());
+            */
             cinfo.put(KEY_CODE, code.getHex());
             cinfo.put(KEY_CODE_BUTTON, code.getType());
             cinfo.put(KEY_CODE_BUTTON_NAME, code.getName());
             cinfo.put(KEY_CODE_REMOTE_ID_FK, code.getRemoteID());
 
-            db.update(TABLE_CODES, cinfo, KEY_CODE_ID + " + ?",
+            db.update(TABLE_CODES, cinfo, KEY_CODE_ID + " = ?",
                     new String[] { String.valueOf(code.getID()) });
         } catch (Exception e){
-            Log.d("DB", "Error updating code id " + code.getID());
+            Log.d("AUDIOIR", "Error updating code id " + code.getID());
+            Log.d("AUDIOIR", "Message:\n" + e.getMessage());
             e.printStackTrace();
             return false;
         }
 
         return true;
-    }
-
-    // Return all codes for a given remote
-    public ArrayList<Code> getCodesForRemote(Remote remote){
-        ArrayList<Code> codes = new ArrayList<>();
-        SQLiteDatabase db = getReadableDatabase();
-        final String GET_CODES_FOR_REMOTE = "SELECT * FROM " + TABLE_CODES +
-                    " WHERE " + KEY_CODE_REMOTE_ID_FK + " LIKE " + remote.getID();
-        Cursor cursor = db.rawQuery(GET_CODES_FOR_REMOTE, null);
-        try {
-            if(cursor.moveToFirst()){
-                do {
-                    Code code = new Code(cursor.getInt(cursor.getColumnIndex(KEY_CODE_ID)),
-                            remote.getID(),
-                            cursor.getString(cursor.getColumnIndex(KEY_CODE)),
-                            cursor.getInt(cursor.getColumnIndex(KEY_CODE_BUTTON)),
-                            cursor.getString(cursor.getColumnIndex(KEY_CODE_BUTTON_NAME)));
-                    codes.add(code);
-                } while (cursor.moveToNext());
-            }
-        } catch (Exception e){
-            Log.d("DB", "Error retrieving codes for remote ID: " + remote.getID());
-        } finally {
-            if(cursor != null && !cursor.isClosed())
-                cursor.close();
-        }
-        return codes;
     }
 
     // Return all codes for a given remote ID (probably lighter on memory resources)
@@ -294,7 +268,7 @@ public class RemotesDBHelper extends SQLiteOpenHelper {
                 } while (cursor.moveToNext());
             }
         } catch (Exception e){
-            Log.d("DB", "Error retrieving codes for remote ID: " + id);
+            Log.d("AUDIOIR", "Error retrieving codes for remote ID: " + id);
         } finally {
             if(cursor != null && !cursor.isClosed())
                 cursor.close();
@@ -317,7 +291,7 @@ public class RemotesDBHelper extends SQLiteOpenHelper {
                         cursor.getString(cursor.getColumnIndex(KEY_CODE_BUTTON_NAME)));
             }
         } catch (Exception e){
-            Log.d("DB", "Error retrieving code by ID");
+            Log.d("AUDIOIR", "Error retrieving code by ID");
         } finally {
             if (cursor != null && !cursor.isClosed())
                 cursor.close();
@@ -341,8 +315,8 @@ public class RemotesDBHelper extends SQLiteOpenHelper {
                 } while(cursor.moveToNext());
             }
         } catch (Exception e) {
-            Log.d("DB", "Error getting vendor list");
-            Log.d("e", e.getMessage());
+            Log.d("AUDIOIR", "Error getting vendor list");
+            Log.d("AUDIOIR", e.getMessage());
             e.printStackTrace();
             return vendors;
         } finally {
@@ -365,8 +339,8 @@ public class RemotesDBHelper extends SQLiteOpenHelper {
             db.insertOrThrow(TABLE_VENDORS, null, vinfo);
             db.setTransactionSuccessful();
         } catch (Exception e) {
-            Log.d("DB", "Error adding vendor to db");
-            Log.d("e", e.getMessage());
+            Log.d("AUDIOIR", "Error adding vendor to db");
+            Log.d("AUDIOIR", e.getMessage());
             e.printStackTrace();
             return false;
         } finally {
@@ -388,7 +362,7 @@ public class RemotesDBHelper extends SQLiteOpenHelper {
                 id = cursor.getInt(cursor.getColumnIndex(KEY_VENDOR_ID));
             }
         } catch (Exception e){
-            Log.d("DB", "Error retrieving vendor");
+            Log.d("AUDIOIR", "Error retrieving vendor");
         } finally {
             if(cursor != null && !cursor.isClosed())
                 cursor.close();
@@ -415,7 +389,6 @@ public class RemotesDBHelper extends SQLiteOpenHelper {
 
     }
 
-
     // Return the current remote or null
     public Remote getCurrentRemote(){
 
@@ -429,17 +402,17 @@ public class RemotesDBHelper extends SQLiteOpenHelper {
         try {
             if (cursor.moveToFirst()){
 
-                // Remote(int id, ArrayList<Code> codes, int vendor, int type, String name, boolean current, String hash)
-                current = new Remote(cursor.getInt(cursor.getColumnIndex(KEY_REMOTE_ID)),
-                        getCodesForRemote(cursor.getColumnIndex(KEY_REMOTE_ID)),
+                // Remote(int id, ArrayList<Code> codes, int vendor, int type, String name, boolean current, int hash)
+                current = new Remote(cursor.getLong(cursor.getColumnIndex(KEY_REMOTE_ID)),
+                        getCodesForRemote(cursor.getLong(cursor.getColumnIndex(KEY_REMOTE_ID))),
                         cursor.getInt(cursor.getColumnIndex(KEY_REMOTE_VENDOR)),
                         cursor.getInt(cursor.getColumnIndex(KEY_REMOTE_TYPE)),
                         cursor.getString(cursor.getColumnIndex(KEY_REMOTE_NAME)),
                         cursor.getInt(cursor.getColumnIndex(KEY_CURRENT)) == 1,
-                        cursor.getString(cursor.getColumnIndex(KEY_REMOTE_HASH)));
+                        cursor.getInt(cursor.getColumnIndex(KEY_REMOTE_HASH)));
             }
         } catch (Exception e) {
-            Log.d("CURRENT", "Error getting current remote");
+            Log.d("AUDIOIR", "Error getting current remote");
         } finally {
             if(cursor != null && !cursor.isClosed())
                 cursor.close();
@@ -459,7 +432,7 @@ public class RemotesDBHelper extends SQLiteOpenHelper {
             db.execSQL(CLEAR_CURRENT);
             db.setTransactionSuccessful();
         } catch (Exception e) {
-            Log.d("CURRENT", "Error setting current bits to 0");
+            Log.d("AUDIOIR", "Error setting current bits to 0");
         } finally {
             db.endTransaction();
         }
@@ -475,7 +448,7 @@ public class RemotesDBHelper extends SQLiteOpenHelper {
             return db.update(TABLE_REMOTES, rinfo, KEY_REMOTE_ID + " = ?",
                     new String[] { String.valueOf(id)});
         } catch (Exception e){
-            Log.d("DB", "Error updating current remote in db");
+            Log.d("AUDIOIR", "Error updating current remote in db");
             e.printStackTrace();
         }
 
@@ -504,7 +477,7 @@ public class RemotesDBHelper extends SQLiteOpenHelper {
                 } while (cursor.moveToNext());
             }
         } catch (Exception e){
-            Log.d("DB", "Error dumping all codes");
+            Log.d("AUDIOIR", "Error dumping all codes");
         } finally {
             if (cursor != null && !cursor.isClosed())
                 cursor.close();
@@ -518,7 +491,7 @@ public class RemotesDBHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_REMOTES);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_VENDORS);
         onCreate(db);
-	    Log.d("DB", "~ Purged DB ~");
+	    Log.d("AUDIOIR", "~ Purged DB ~");
     }
 }
 

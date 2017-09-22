@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -23,7 +22,7 @@ public class EditCode extends AppCompatActivity {
         setContentView(R.layout.activity_edit_code);
 
         // Get the id of the code we're editing from the intent.
-        this.code = rdb.getCodeByID(getIntent().getIntExtra("id", 666));
+        this.code = rdb.getCodeByID(getIntent().getIntExtra("id", -1));
 
         nameText = findViewById(R.id.codeNameText);
         hex = findViewById(R.id.editcode_hex);

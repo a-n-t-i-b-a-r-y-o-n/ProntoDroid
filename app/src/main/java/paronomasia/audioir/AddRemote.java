@@ -46,9 +46,12 @@ public class AddRemote extends AppCompatActivity implements OnItemSelectedListen
         fab.setOnClickListener(v -> {
 
             if (!remoteNameField.getText().toString().equals("")) {
-                // Remote(ArrayList<Code> codes, int vendor, int type, String name, boolean current, String hash)
-                if(rdb.addRemote(new Remote(null, rdb.getVendor(vendorMenu.getSelectedItem().toString()),
-                        typeMenu.getSelectedItemPosition(), remoteNameField.getText().toString(), true, ""))) {
+                // Uses second Remote() constructor.
+                // Remote(ArrayList<Code> codes, int vendor, int type, String name, boolean current)
+                if(rdb.addRemote(new Remote(rdb.getVendor(vendorMenu.getSelectedItem().toString()),
+                        typeMenu.getSelectedItemPosition(),
+                        remoteNameField.getText().toString(),
+                        true))) {
                     finish();
                 }
                 else {

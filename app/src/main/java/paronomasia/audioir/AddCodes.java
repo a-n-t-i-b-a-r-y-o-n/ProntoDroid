@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -60,6 +59,17 @@ public class AddCodes extends AppCompatActivity implements AdapterView.OnItemSel
         });
 
 
+        fab.setOnClickListener(v -> {
+            if(!codehex.getText().toString().equals("") && !codename.getText().toString().equals("")) {
+                rdb.addCode(rdb.getCurrentRemote().getID(), new Code(-1, rdb.getCurrentRemote().getID(), codehex.getText().toString(), ((Code.buttonType) codetype.getSelectedItem()).getNum(), codename.getText().toString()));
+                finish();
+            }
+            else
+                Toast.makeText(this, "Please make sure all fields are filled.", Toast.LENGTH_SHORT)
+                        .show();
+        });
+
+
     }
 
     @Override
@@ -71,24 +81,8 @@ public class AddCodes extends AppCompatActivity implements AdapterView.OnItemSel
         super.onResume();
 
         TextView remoteNameLabel = findViewById(R.id.remoteNameLabel);
-        remoteNameLabel.setText(String.format("%s: %s", R.string.remoteName, rdb.getCurrentRemote().getName()));
+        remoteNameLabel.setText(String.format("Adding code for remote: %s", rdb.getCurrentRemote().getName()));
 
-
-
-        rdb = new RemotesDBHelper(AddCodes.this);
-
-
-        fab.setOnClickListener(v -> {
-            Log.d("DB", "Attempting to add code to remote " + rdb.getCurrentRemote().getID());
-            if(!codehex.getText().toString().equals("") && !codename.getText().toString().equals("")) {
-                Log.d("DB", "Returned: " + rdb.addCode(rdb.getCurrentRemote().getID(), new Code(-1, rdb.getCurrentRemote().getID(), codehex.getText().toString(), ((Code.buttonType) codetype.getSelectedItem()).getNum(), codename.getText().toString())));
-
-                finish();
-            }
-            else
-                Toast.makeText(this, "Please make sure all fields are filled.", Toast.LENGTH_SHORT)
-                        .show();
-        });
 
     }
 

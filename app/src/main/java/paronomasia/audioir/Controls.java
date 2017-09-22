@@ -1,8 +1,6 @@
 package paronomasia.audioir;
 
 import android.content.Intent;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -15,8 +13,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import java.util.ArrayList;
 
 public class Controls extends AppCompatActivity {
 
@@ -58,24 +54,11 @@ public class Controls extends AppCompatActivity {
         ImageButton volUPButton = findViewById(R.id.volUPButton);
         ImageButton volDNButton = findViewById(R.id.volDNButton);
         ImageButton muteButton = findViewById(R.id.muteButton);
-        ImageButton testProntoButton = findViewById(R.id.testProntoButton);
 
 
         this.rdb = new RemotesDBHelper(Controls.this);
 
-
-
-        // test out the ProntoHEX generation/playing with the default Sanyo Power
-        testProntoButton.setOnClickListener(v -> {
-            Pronto p1 = new Pronto("0000 006C 0022 0002 015B 00AD 0016 0016 0016 0016 " +
-                    "0016 0016 0016 0041 0016 0041 0016 0041 0016 0016 0016 0016 0016 0041 0016 " +
-                    "0041 0016 0041 0016 0016 0016 0016 0016 0016 0016 0041 0016 0041 0016 0016 " +
-                    "0016 0041 0016 0016 0016 0016 0016 0041 0016 0016 0016 0016 0016 0016 0016 " +
-                    "0041 0016 0016 0016 0041 0016 0041 0016 0016 0016 0041 0016 0041 0016 0041 " +
-                    "0016 05F7 015B 0057 0016 0E6C");
-            p1.generateAndPlay();
-            p1.debugPrintHex();
-        });
+        this.current = rdb.getCurrentRemote();
 
 
         // This opens the little FAB menu when you click on the regular FAB
@@ -120,15 +103,51 @@ public class Controls extends AppCompatActivity {
         });
 
 
-        pwrButton.setOnClickListener(v -> transmitCode(R.raw.sanyopower, Code.buttonType.POWER));
+        // still hardcoded buttons, so they at least look for their code type.
+        pwrButton.setOnClickListener(v -> {
+            for(Code c : current.getCodes()){
+                if(c.getType() == 0){
+                    Pronto p = new Pronto(c.getHex());
+                    p.play(getApplicationContext());
+                }
+            }
+        });
 
-        inputButton.setOnClickListener(v -> transmitCode(R.raw.sanyoinput, Code.buttonType.INPUT));
+        inputButton.setOnClickListener(v -> {
+            for(Code c : current.getCodes()){
+                if(c.getType() == 1){
+                    Pronto p = new Pronto(c.getHex());
+                    p.play(getApplicationContext());
+                }
+            }
+        });
 
-        volUPButton.setOnClickListener(v -> transmitCode(R.raw.sanyovolup, Code.buttonType.VOLUP));
+        volUPButton.setOnClickListener(v -> {
+            for(Code c : current.getCodes()){
+                if(c.getType() == 2){
+                    Pronto p = new Pronto(c.getHex());
+                    p.play(getApplicationContext());
+                }
+            }
+        });
 
-        volDNButton.setOnClickListener(v -> transmitCode(R.raw.sanyovoldown, Code.buttonType.VOLDN));
+        volDNButton.setOnClickListener(v -> {
+            for(Code c : current.getCodes()){
+                if(c.getType() == 3){
+                    Pronto p = new Pronto(c.getHex());
+                    p.play(getApplicationContext());
+                }
+            }
+        });
 
-        muteButton.setOnClickListener(v -> Toast.makeText(v.getContext(), "Mute", Toast.LENGTH_SHORT).show());
+        muteButton.setOnClickListener(v -> {
+            for(Code c : current.getCodes()){
+                if(c.getType() == 4){
+                    Pronto p = new Pronto(c.getHex());
+                    p.play(getApplicationContext());
+                }
+            }
+        });
 
     }
 
@@ -143,8 +162,19 @@ public class Controls extends AppCompatActivity {
 
         TextView currentText = findViewById(R.id.currentText);
 
-        this.current = rdb.getCurrentRemote();
-        if(this.current != null){
+        if(this.current != null && rdb.getCurrentRemote() != null){
+            if(this.current.hashCode() != rdb.getCurrentRemote().hashCode()) {
+                // Reload the remote, something's changed.
+                Log.d("AUDIOIR", "Remote changed. Reloading...");
+                this.current = rdb.getCurrentRemote();
+            }
+            else {
+                Log.d("AUDIOIR", "Remote unchanged.");
+            }
+            currentText.setText(this.current.getName());
+        }
+        else if(this.current == null && rdb.getAllRemotes() != null) {
+            this.current = rdb.getCurrentRemote();
             currentText.setText(this.current.getName());
         }
         else {
@@ -160,11 +190,11 @@ public class Controls extends AppCompatActivity {
                 if(result == RESULT_OK){
                     // Determine the remote selected and change the UI accordingly.
                     int res = data.getIntExtra("remote", 0);
-                    Log.d(" ~ Lifecycle ~ ", "Returned to Controls");
-                    Log.d("Result", data.getExtras().toString());
+                    Log.d("AUDIOIR", "Lifecycle: Returned to Controls");
+                    Log.d("AUDIOIR", "Result: " + data.getExtras().toString());
                 }
                 else {
-                    Log.d(" ~ Lifecycle ~ ", "Returned with result " + result);
+                    Log.d("AUDIOIR", "Returned with result " + result);
                 }
                 break;
 
@@ -279,21 +309,4 @@ public class Controls extends AppCompatActivity {
         return super.dispatchTouchEvent(e);
     }
 
-
-    public void transmitCode(int wavFile, Code.buttonType type){
-
-        // Determine and set max volume
-        AudioManager am = (AudioManager) getSystemService(AUDIO_SERVICE);
-        int origVol = am.getStreamVolume(AudioManager.STREAM_MUSIC);
-        am.setStreamVolume(AudioManager.STREAM_MUSIC, am.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
-
-        // Initiate playback
-        MediaPlayer mp = MediaPlayer.create(this, wavFile);
-        mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        mp.setVolume(1, 1);
-        mp.start();
-
-        // Reset volume to original setting for the user
-        mp.setOnCompletionListener(l -> am.setStreamVolume(AudioManager.STREAM_MUSIC, origVol, 0));
-    }
 }
