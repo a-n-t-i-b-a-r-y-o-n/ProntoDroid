@@ -1,9 +1,8 @@
-package paronomasia.audioir;
+package paronomasia.prontodroid;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
 

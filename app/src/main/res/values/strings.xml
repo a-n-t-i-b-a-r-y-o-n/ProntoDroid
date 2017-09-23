@@ -1,8 +1,9 @@
 <resources>
 
+    <!-- App Strings -->
+    <string name="app_name">Pronto</string>
+
     <!-- Controls Activity -->
-    <string name="app_name">AudioIR</string>
-    <string name="action_settings">Settings</string>
     <string name="VolUP">Vol+</string>
     <string name="VolDN">Vol-</string>
     <string name="input">Input</string>

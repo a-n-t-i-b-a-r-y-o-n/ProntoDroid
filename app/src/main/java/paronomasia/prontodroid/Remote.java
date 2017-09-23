@@ -1,6 +1,5 @@
-package paronomasia.audioir;
+package paronomasia.prontodroid;
 
-import android.util.Log;
 import java.util.ArrayList;
 import java.util.Objects;
 

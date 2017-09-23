@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:theme="@style/Base.ThemeOverlay.AppCompat.Dark.ActionBar"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="paronomasia.audioir.AddRemote"
+    tools:context="paronomasia.prontodroid.AddRemote"
     tools:showIn="@layout/activity_add_remote">
 
     <EditText

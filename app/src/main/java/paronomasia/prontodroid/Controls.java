@@ -1,9 +1,8 @@
-package paronomasia.audioir;
+package paronomasia.prontodroid;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -19,7 +18,6 @@ public class Controls extends AppCompatActivity {
     /*
     TODO
         - Make the buttons (re)arrangeable
-        - Link between each button and its Code.buttonType (for drawables and codes)
         - Implement the settings MiniFAB
      */
 
@@ -31,6 +29,7 @@ public class Controls extends AppCompatActivity {
     private FloatingActionButton minifab_add;
     private FloatingActionButton minifab_settings;
     private FloatingActionButton minifab_list;
+    private int mainFab = R.drawable.ic_remote_logo_white_48dp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +45,7 @@ public class Controls extends AppCompatActivity {
         minifab_settings = findViewById(R.id.minifab_settings);
         minifab_list = findViewById(R.id.minifab_list);
 
-        fab.setImageResource(R.drawable.remote_icon_48dp);
+        fab.setImageResource(mainFab);
 
         // These will be created dynamically soon enough...
         ImageButton pwrButton = findViewById(R.id.pwrButton);
@@ -65,8 +64,8 @@ public class Controls extends AppCompatActivity {
         fab.setOnClickListener(v -> {
             if(fabMenu){
                 closeFabMenu();
-                Snackbar.make(v, "Editing isn't implemented yet...", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Toast.makeText(this, "Editing isn't finished yet...", Toast.LENGTH_SHORT)
+                        .show();
             }
             else {
                 openFabMenu();
@@ -279,7 +278,7 @@ public class Controls extends AppCompatActivity {
             minifab_list.setVisibility(View.INVISIBLE);
 
             // Set main FAB icon back to normal
-            fab.setImageResource(R.drawable.remote_icon_48dp);
+            fab.setImageResource(mainFab);
         }
     }
 

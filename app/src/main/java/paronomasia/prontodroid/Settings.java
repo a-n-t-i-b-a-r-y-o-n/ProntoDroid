@@ -1,4 +1,4 @@
-package paronomasia.audioir;
+package paronomasia.prontodroid;
 
 import android.annotation.TargetApi;
 import android.content.Context;

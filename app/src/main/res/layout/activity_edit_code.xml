@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/black"
-    tools:context="paronomasia.audioir.EditCode">
+    tools:context="paronomasia.prontodroid.EditCode">
 
     <include layout="@layout/content_edit_code" />
 
@@ -15,6 +15,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
+        app:backgroundTint="@color/fabColor"
         app:srcCompat="@drawable/ic_check_white_48dp" />
 
 </android.support.design.widget.CoordinatorLayout>

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="paronomasia.audioir">
+    package="paronomasia.prontodroid">
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_launcher1"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true"
+        android:roundIcon="@mipmap/ic_launcher1"
+        android:supportsRtl="false"
         android:theme="@style/Theme.CurrentAppTheme">
         <activity
             android:name=".Controls"
@@ -27,7 +27,7 @@
             android:theme="@style/Theme.CurrentAppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="paronomasia.audioir.Controls" />
+                android:value="paronomasia.prontodroid.Controls" />
         </activity>
         <activity
             android:name=".AddRemote"
@@ -36,7 +36,7 @@
             android:theme="@style/Theme.CurrentAppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="paronomasia.audioir.Controls" />
+                android:value="paronomasia.prontodroid.Controls" />
         </activity>
         <activity
             android:name=".AddCodes"
@@ -49,7 +49,7 @@
             android:theme="@style/Theme.CurrentAppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="paronomasia.audioir.Controls" />
+                android:value="paronomasia.prontodroid.Controls" />
         </activity>
         <activity
             android:name=".EditCode"

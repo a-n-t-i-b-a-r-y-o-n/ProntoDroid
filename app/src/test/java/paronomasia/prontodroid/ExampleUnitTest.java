@@ -1,4 +1,4 @@
-package paronomasia.audioir;
+package paronomasia.prontodroid;
 
 import org.junit.Test;
 

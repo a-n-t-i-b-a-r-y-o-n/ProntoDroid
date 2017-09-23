@@ -8,7 +8,7 @@
     android:layout_height="match_parent"
     android:theme="@style/Platform.ThemeOverlay.AppCompat.Dark"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="paronomasia.audioir.RemoteList"
+    tools:context="paronomasia.prontodroid.RemoteList"
     tools:showIn="@layout/activity_remote_list">
 
 </android.support.v7.widget.RecyclerView>

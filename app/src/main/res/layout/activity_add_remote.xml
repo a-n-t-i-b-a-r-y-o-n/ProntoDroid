@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@android:color/black"
     android:theme="@style/Base.ThemeOverlay.AppCompat.Dark.ActionBar"
-    tools:context="paronomasia.audioir.AddRemote">
+    tools:context="paronomasia.prontodroid.AddRemote">
 
     <include layout="@layout/content_add_remote" />
 
@@ -16,6 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
+        app:backgroundTint="@color/fabColor"
         app:srcCompat="@drawable/ic_add_white_48dp" />
 
 </android.support.design.widget.CoordinatorLayout>

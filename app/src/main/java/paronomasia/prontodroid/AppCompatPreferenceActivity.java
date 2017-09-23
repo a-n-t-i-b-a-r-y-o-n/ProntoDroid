@@ -1,4 +1,4 @@
-package paronomasia.audioir;
+package paronomasia.prontodroid;
 
 import android.content.res.Configuration;
 import android.os.Bundle;

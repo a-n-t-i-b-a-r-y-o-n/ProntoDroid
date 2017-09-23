@@ -7,7 +7,7 @@
     android:background="@android:color/black"
     android:fitsSystemWindows="false"
     android:theme="@android:style/ThemeOverlay.Material.Dark"
-    tools:context="paronomasia.audioir.CodeList">
+    tools:context="paronomasia.prontodroid.CodeList">
 
     <include layout="@layout/content_code_list" />
 
@@ -17,6 +17,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
+        app:backgroundTint="@color/fabColor"
         app:srcCompat="@drawable/ic_add_white_48dp" />
 
 </android.support.design.widget.CoordinatorLayout>
