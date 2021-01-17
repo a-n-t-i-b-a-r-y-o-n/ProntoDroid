@@ -1,3 +1,7 @@
+# !! Not actively maintained !!
+I no longer have a need for this project (caved and bought a smart TV) so I'm not maintaining it.  
+The basic PoC still works just fine with the necessary hardware, though. Feel free to fork and hack away!
+
 # ProntoDroid
 
 ## Features
